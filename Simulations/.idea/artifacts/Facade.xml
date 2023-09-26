@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Facade">
+    <output-path>$PROJECT_DIR$/out/artifacts/Facade</output-path>
+    <root id="archive" name="Facade.jar">
+      <element id="module-output" name="Facade" />
+    </root>
+  </artifact>
+</component>
