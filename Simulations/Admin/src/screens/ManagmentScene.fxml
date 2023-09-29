@@ -35,7 +35,7 @@
                         <Label layoutX="356.0" layoutY="17.0" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Available simulations Details" GridPane.rowIndex="1" />
                         <HBox>
                             <children>
-                                <Button mnemonicParsing="false" text="Load file" />
+                                <Button mnemonicParsing="false" onAction="#onLoadFileAction" text="Load file" />
                                 <TextField id="filePathTextField" fx:id="filePathTextField" prefHeight="25.0" prefWidth="245.0" promptText="Currently file path" />
                             </children>
                         </HBox>

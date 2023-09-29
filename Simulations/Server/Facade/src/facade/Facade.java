@@ -14,6 +14,7 @@ import logic.world.WorldInstance;
 
 
 import javax.xml.bind.JAXBException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -55,9 +56,9 @@ public class Facade {
         return queueManagmentDTO;
     }
 
-    public WorldDefinitionDTO generatorOperation(String file) throws JAXBException, IllegalArgumentException {
+    public WorldDefinitionDTO generatorOperation(String file, InputStream fileContent) throws JAXBException, IllegalArgumentException {
         generator = new GenerateXML();
-       worldDefinition = generator.fromXmlFileToObject(file);
+       worldDefinition = generator.fromXmlFileToObject(file, fileContent);
        numberOfThread = worldDefinition.getNumberOfThreads();
        WorldDefinitionDTO worldDefinitionDTO = dtoCreator.createWorldDefinitionDTO(worldDefinition);
        this.file = file;
@@ -92,7 +93,7 @@ public class Facade {
 
     public SimulationDTO startSimulationInHistory(ActiveEnvironmentDTO activeEnvironmentDTO,
                                                   List<EntityDefinition> population) throws JAXBException {
-        worldDefinition = generator.fromXmlFileToObject(file);
+        //worldDefinition = generator.fromXmlFileToObject(file);
         ActiveEnvironment activeEnvironment = createEnvVarible(activeEnvironmentDTO);
         for(EntityDefinition entityDefinition : population){
             for(EntityDefinition entityDefinition1 : worldDefinition.getPopulation()){

@@ -4,6 +4,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.File;
+import java.io.InputStream;
 import java.util.*;
 
 import com.bean.*;
@@ -28,11 +29,8 @@ import logic.world.WorldDefinition;
 public class GenerateXML {
     private static SimulationBuilder builder = new SimulationBuilder();
 
-    public WorldDefinition fromXmlFileToObject(String fileName) throws JAXBException, IllegalArgumentException {
+    public WorldDefinition fromXmlFileToObject(String fileName, InputStream fileContent) throws JAXBException, IllegalArgumentException {
         File file = new File(fileName);
-        if (!file.exists()) {
-            throw new IllegalArgumentException("File does not exist: " + fileName);
-        }
 
         String extension = getFileExtension(fileName);
         if (!extension.equalsIgnoreCase("xml")) {
@@ -41,7 +39,7 @@ public class GenerateXML {
         JAXBContext jaxbContext = JAXBContext.newInstance(PRDWorld.class);
 
         Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-        PRDWorld world = (PRDWorld) jaxbUnmarshaller.unmarshal(file);
+        PRDWorld world = (PRDWorld) jaxbUnmarshaller.unmarshal(fileContent);
         checkXML(world);
         WorldDefinition worldDefinition =  builder.buildWorld(world);
         checkIfArgumentIsNumber(worldDefinition.getRules());

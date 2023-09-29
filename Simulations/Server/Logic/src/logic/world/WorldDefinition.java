@@ -23,6 +23,8 @@ public class WorldDefinition {
     private EnvVariablesManger environmentsVariables = new EnvVariableManagerImpl();
 
     private List<Rule> rules;
+    private String name;
+    private int sleep;
 
     public WorldDefinition(){
         ticks = 0;
@@ -35,6 +37,22 @@ public class WorldDefinition {
         this();
         this.rows = rows;
         this.columns = columns;
+    }
+
+    public int getSleep() {
+        return sleep;
+    }
+
+    public void setSleep(int sleep) {
+        this.sleep = sleep;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setColumns(int columns) {

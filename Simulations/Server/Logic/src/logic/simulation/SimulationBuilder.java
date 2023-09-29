@@ -48,6 +48,8 @@ public class SimulationBuilder {
         //for(TerminateCondition terminateCondition : terminateConditions){
             //worldDefinition.addTerminateCondition(terminateCondition);
         //}
+        worldDefinition.setName(world.getName());
+        worldDefinition.setSleep(world.getSleep());
         List<EntityDefinition> entities = buildEntityDefinition
                 (world.getPRDEntities().getPRDEntity());
         for(EntityDefinition entityDefinition : entities){

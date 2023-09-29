@@ -55,7 +55,7 @@ public class DTOCreator {
         EnvVariableManagerDTO envVariableManagerDTO = createEnvVariableManagerDTO(worldDefinition.getEnvironmentsVariables());
         WorldDefinitionDTO worldDefinitionDTO = new WorldDefinitionDTO(entityDefinitionDTOS,worldDefinition.getTicks(),terminateConditionDTOS,
                 envVariableManagerDTO,ruleDTOS, worldDefinition.getNumberOfThreads(),
-                worldDefinition.getRows(), worldDefinition.getColumns());
+                worldDefinition.getRows(), worldDefinition.getColumns(), worldDefinition.getName(), worldDefinition.getSleep());
         return worldDefinitionDTO;
 
 
