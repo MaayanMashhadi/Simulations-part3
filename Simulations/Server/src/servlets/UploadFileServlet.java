@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import logic.dto.WorldDefinitionDTO;
+import utils.SimulationsDefinitionsManager;
 
 import javax.xml.bind.JAXBException;
 import java.io.BufferedReader;
@@ -25,7 +26,6 @@ import java.nio.file.Paths;
 
 @WebServlet(name="upload file", urlPatterns="/upload-file")
 public class UploadFileServlet extends HttpServlet {
-    private Facade facade = new Facade();
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         Part filePart = request.getPart("file1"); // "file1" should match the name attribute of the file input field in your HTML form
@@ -35,7 +35,9 @@ public class UploadFileServlet extends HttpServlet {
             String fileName = filePart.getSubmittedFileName(); //master-ex3.xml
             fileContent = filePart.getInputStream();
             try {
-             worldDefinitionDTO = facade.generatorOperation(fileName, fileContent);
+             worldDefinitionDTO = ((Facade)getServletContext().getAttribute("facade")).generatorOperation(fileName, fileContent);
+                ((SimulationsDefinitionsManager) getServletContext().getAttribute("simulationsDefinitionsManager"))
+                        .addSimulation(worldDefinitionDTO);
             } catch (JAXBException e) {
                 response.getWriter().println("An Exception occurred while uploading file. name:\n" + fileName);
                 return;
@@ -50,6 +52,7 @@ public class UploadFileServlet extends HttpServlet {
                     fileContentString.append(line).append("\n");
                 }
             }
+
 
             // Print the file content
             response.getWriter().println("File uploaded successfully. Content:\n" + fileContentString.toString());

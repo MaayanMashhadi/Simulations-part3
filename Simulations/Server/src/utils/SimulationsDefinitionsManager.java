@@ -24,4 +24,7 @@ public class SimulationsDefinitionsManager {
                 .filter(worldDefinitionDTO -> worldDefinitionDTO.getName().equals(name))
                 .findFirst().orElse(null);
     }
+    public void removeSimulationByName(String name){
+        allSimulations.removeIf(worldDefinitionDTO -> worldDefinitionDTO.getName().equals(name));
+    }
 }
