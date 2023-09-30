@@ -22,7 +22,15 @@
                     <children>
                         <HBox fx:id="availableSimulationHbox" prefHeight="406.0" prefWidth="347.0" GridPane.rowIndex="2">
                             <children>
-                                <ListView fx:id="simulationsDetailsListView" prefHeight="375.0" prefWidth="346.0" />
+                                <ListView fx:id="simulationsDetailsListView" prefHeight="333.0" prefWidth="201.0" />
+                        <ScrollPane fx:id="rightTreeContainer" prefHeight="333.0" prefWidth="224.0">
+                          <content>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="322.0" prefWidth="200.0">
+                                 <children>
+                                    <VBox fx:id="vboxForRightTree" layoutX="-2.0" layoutY="-1.0" prefHeight="318.0" prefWidth="187.0" />
+                                 </children></AnchorPane>
+                          </content>
+                        </ScrollPane>
                             </children>
                         </HBox>
                         <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">

@@ -9,6 +9,10 @@
           <element id="module-output" name="Facade" />
           <element id="module-output" name="Logic" />
         </element>
+        <element id="directory" name="lib">
+          <element id="file-copy" path="$PROJECT_DIR$/Server/web/WEB-INF/lib/gson-2.8.8.jar" />
+          <element id="dir-copy" path="$PROJECT_DIR$" />
+        </element>
       </element>
     </root>
   </artifact>
