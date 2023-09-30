@@ -145,7 +145,7 @@ public class DTOCreator {
     private ActionDTO showAction(Action action){
         ActionDTO actionDTO;
         switch (action.getActionType()){
-            case DECREASE:
+            case ActionType.DECREASE:
                 Decrease decrease = (Decrease) action;
                 if(action.getContextDefinition().getSecondaryEntity() != null){
                     actionDTO = new ActionDTO(action.getActionType().name(), action.getContextDefinition().getPrimaryEntity().getName(),
@@ -160,7 +160,7 @@ public class DTOCreator {
                 }
                 return actionDTO;
 
-            case INCREASE:
+            case ActionType.INCREASE:
                 Increase increase = (Increase) action;
                 if(action.getContextDefinition().getSecondaryEntity() != null){
                     actionDTO = new ActionDTO(action.getActionType().name(), action.getContextDefinition().getPrimaryEntity().getName(),
@@ -175,7 +175,7 @@ public class DTOCreator {
                 }
                 return actionDTO;
 
-            case KILL:
+            case ActionType.KILL:
                 Kill kill = (Kill) action;
                 if(kill.getContextDefinition().getSecondaryEntity() != null){
                     actionDTO = new ActionDTO(kill.getActionType().name(), kill.getContextDefinition().getPrimaryEntity().getName(),
@@ -190,21 +190,21 @@ public class DTOCreator {
                 }
                 return actionDTO;
 
-            case PROXIMITY:
+            case ActionType.PROXIMITY:
                 Proximity proximity = (Proximity) action;
                 actionDTO = new ActionDTO(proximity.getActionType().name(),
                         proximity.getContextDefinition().getPrimaryEntity().getName(),proximity.getContextDefinition().getSecondaryEntity().getName()
                 , proximity.getOf(), String.valueOf(proximity.getSizeOfAction()));
                 return actionDTO;
 
-             case REPLACE:
+             case ActionType.REPLACE:
                  Replace replace = (Replace) action;
                  actionDTO = new ActionDTO(replace.getActionType().name(),
                          replace.getContextDefinition().getPrimaryEntity().getName(),replace.getContextDefinition().getSecondaryEntity().getName()
                          , null,null);
                  return actionDTO;
 
-            case SET:
+            case ActionType.SET:
                 Set set = (Set) action;
                 if(set.getContextDefinition().getSecondaryEntity() != null){
                     actionDTO = new ActionDTO(set.getActionType().name(), set.getContextDefinition().getPrimaryEntity().getName(),
@@ -219,7 +219,7 @@ public class DTOCreator {
                 }
                 return actionDTO;
 
-            case MULTIPLY:
+            case ActionType.MULTIPLY:
                 Calculation calculation = (Calculation) action;
                 if(calculation.getContextDefinition().getSecondaryEntity() != null){
                     actionDTO = new ActionDTO(calculation.getActionType().name(), calculation.getContextDefinition().getPrimaryEntity().getName(),
@@ -233,7 +233,7 @@ public class DTOCreator {
                             calculation.getArgument2());
                 }
                 return actionDTO;
-            case DIVIDE:
+            case ActionType.DIVIDE:
                 Divide divide = (Divide) action;
                 if(divide.getContextDefinition().getSecondaryEntity() != null){
                     actionDTO = new ActionDTO(divide.getActionType().name(), divide.getContextDefinition().getPrimaryEntity().getName(),
@@ -248,7 +248,7 @@ public class DTOCreator {
                 }
                 return actionDTO;
 
-            case CONDITION:
+            case ActionType.CONDITION:
                 ActionCondition actionCondition = (ActionCondition) action;
                 int sizeOfElse = 0;
                 if(actionCondition.getListElse() != null){

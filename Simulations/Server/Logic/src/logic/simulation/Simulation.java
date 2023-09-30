@@ -1,12 +1,8 @@
 package logic.simulation;
 
-import javafx.application.Platform;
-import javafx.fxml.FXML;
-import javafx.scene.control.TreeItem;
 import logic.definition.entity.api.EntityDefinition;
 import logic.definition.property.api.PropertyDefinition;
-import logic.dto.*;
-import logic.execution.context.Context;
+import dto.*;
 import logic.execution.context.ContextImpl;
 import logic.execution.instance.entity.api.EntityInstance;
 import logic.execution.instance.property.api.PropertyInstance;
@@ -18,12 +14,10 @@ import logic.terminateCondition.TerminateByTicks;
 import logic.terminateCondition.TerminateCondition;
 import logic.world.WorldDefinition;
 import logic.world.WorldInstance;
+import dto.*;
 
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Semaphore;
 import java.util.stream.Collectors;
 
 public class Simulation implements Runnable {

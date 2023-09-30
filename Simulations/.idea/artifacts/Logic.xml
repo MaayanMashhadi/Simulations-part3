@@ -3,6 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/Logic</output-path>
     <root id="archive" name="Logic.jar">
       <element id="module-output" name="Logic" />
+      <element id="module-output" name="DTO" />
     </root>
   </artifact>
 </component>

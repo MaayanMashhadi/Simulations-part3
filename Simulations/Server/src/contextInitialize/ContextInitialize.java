@@ -1,5 +1,6 @@
 package contextInitialize;
 
+import dto.QueueManagmentDTO;
 import facade.Facade;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
@@ -10,9 +11,10 @@ import utils.SimulationsDefinitionsManager;
 public class ContextInitialize implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
+        Facade facade = new Facade();
         servletContextEvent.getServletContext()
                 .setAttribute("simulationsDefinitionsManager",  new SimulationsDefinitionsManager());
-        servletContextEvent.getServletContext().setAttribute("facade", new Facade());
+        servletContextEvent.getServletContext().setAttribute("facade", facade);
 
     }
 

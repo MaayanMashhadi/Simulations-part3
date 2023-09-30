@@ -1,6 +1,6 @@
 package utils;
 
-import logic.dto.WorldDefinitionDTO;
+import dto.WorldDefinitionDTO;
 
 import java.util.ArrayList;
 import java.util.List;

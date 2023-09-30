@@ -6,13 +6,11 @@ import logic.definition.property.api.PropertyType;
 import logic.definition.property.impl.FloatPropertyDefinition;
 import logic.definition.property.impl.IntegerPropertyDefinition;
 import logic.definition.value.api.ValueGeneratorFactory;
-import logic.dto.PropertyInstanceDTO;
-import logic.dto.SimulationHistory;
+import dto.*;
 import logic.execution.instance.entity.api.EntityInstance;
 import logic.execution.instance.entity.manager.api.EntityInstanceManager;
 import logic.execution.instance.entity.manager.impl.EntityInstanceManagerImpl;
 import logic.execution.instance.environment.api.ActiveEnvironment;
-import logic.execution.instance.environment.impl.ActiveEnvironmentImpl;
 import logic.execution.instance.property.api.PropertyInstance;
 import logic.execution.instance.property.impl.PropertyInstanceImpl;
 import logic.rule.Rule;
@@ -23,9 +21,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class WorldInstance{
 

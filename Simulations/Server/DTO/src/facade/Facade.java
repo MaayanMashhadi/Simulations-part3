@@ -3,7 +3,7 @@ package facade;
 import com.*;
 import logic.definition.entity.api.EntityDefinition;
 import logic.definition.property.api.PropertyDefinition;
-import logic.dto.*;
+import dto.*;
 import logic.execution.instance.environment.api.ActiveEnvironment;
 import logic.execution.instance.environment.impl.ActiveEnvironmentImpl;
 import logic.execution.instance.property.api.PropertyInstance;

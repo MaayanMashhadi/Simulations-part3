@@ -1,15 +1,10 @@
 package logic.simulation;
 
-import logic.definition.entity.api.EntityDefinition;
-import logic.dto.ActiveEnvironmentDTO;
-import logic.dto.DTOCreator;
-import logic.dto.SimulationDTO;
-import logic.dto.SimulationHistory;
+import dto.*;
 import logic.execution.instance.environment.api.ActiveEnvironment;
 import logic.world.WorldDefinition;
 import logic.world.WorldInstance;
 
-import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

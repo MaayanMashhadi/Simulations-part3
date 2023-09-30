@@ -1,6 +1,9 @@
 package controller;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import dto.*;
+import facade.Facade;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -10,16 +13,20 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import logic.dto.*;
 import okhttp3.*;
 
-import javax.xml.bind.JAXBException;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import static controller.MainController.HTTP_CLIENT;
 
 
 public class ManagementController {
@@ -28,11 +35,15 @@ public class ManagementController {
     @FXML private VBox vboxForRightTree;
     private ObservableList<TreeView<String>> treeViews;
     private WorldDefinitionDTO[] simulationsArray;
+    private boolean iaAdd = false;
 
     private final StringProperty loadedFilePath = new SimpleStringProperty();
     public final static String BASE_URL = "http://localhost:8080";
-    public final static OkHttpClient HTTP_CLIENT = new OkHttpClient();
+
     private boolean isNotNull = false;
+    ScheduledExecutorService queueManagement = Executors.newSingleThreadScheduledExecutor();
+    @FXML private ListView queueManagmentListView;
+    private Facade facade;
 
     public void initialize() {
         treeViews = FXCollections.observableArrayList();
@@ -50,8 +61,143 @@ public class ManagementController {
                 updateTreeViewWithSimulations();
             }
         }, 0, 1, TimeUnit.SECONDS);
+        ObservableList<String> queueManagment = FXCollections.observableArrayList();
+
+        queueManagement.scheduleAtFixedRate(() -> {
+                List<Double> queueList = requestQueueManagement();
+                Platform.runLater(() -> {
+                    if(queueManagmentListView.getItems().size() != 0){
+                        queueManagmentListView.getItems().clear();
+                    }
+                    queueManagment.add("Waiting simulations: " +(Double) queueList.get(0));
+                    queueManagment.add("Running simulations: " +(Double)queueList.get(1));
+                    queueManagment.add("Finished simulations: " +(Double) queueList.get(2));
+                    queueManagmentListView.setItems(queueManagment);
+                });
+
+        }, 0, 1, TimeUnit.SECONDS);
 
 
+
+
+    }
+    private List<Double> requestQueueManagement(){
+        final CountDownLatch latch = new CountDownLatch(1);
+        String RESOURCE = "/Server_Web_exploded/queue-management";
+        Request request = new Request.Builder()
+                .url(BASE_URL + RESOURCE)
+                .get()
+                .build();
+        Call call = HTTP_CLIENT.newCall(request);
+        List<Double> listOfQueue = new ArrayList<>();
+        call.enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+
+            }
+            @Override
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                if(response.isSuccessful()){
+                    String jsonResponse = response.body().string();
+                    Gson gson = new Gson();
+                    Type type = new TypeToken<Map<String, Object>>() {}.getType();
+
+                    // Deserialize the JSON string into a Map
+                    Map<String, Object> data = gson.fromJson(jsonResponse, type);
+
+                    // Access the data using keys
+                    Double waitingSimulations = (Double) data.get("waitingSimulations");
+                    Double runningSimulations = (Double) data.get("runningSimulations");
+                    Double finishedSimulations = (Double) data.get("finishedSimulations");
+                    listOfQueue.add(waitingSimulations);
+                    listOfQueue.add(runningSimulations);
+                    listOfQueue.add(finishedSimulations);
+                }
+                else {
+                    // Handle unsuccessful response here
+                    System.err.println("HTTP Error: " + response.code());
+                }
+                latch.countDown();
+            }
+        });
+        try {
+            // Wait for the latch to be released (response processing to complete)
+            latch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return listOfQueue;
+    }
+    public void setFacade(Facade facade){
+        this.facade = facade;
+    }
+    private Integer processUserChoice(String userChoice){
+        if (!integerCheck(userChoice)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText("The value you entered is incorrect. Please enter a DECIMAL number");
+            alert.showAndWait();
+            return null;
+
+        }
+        else{
+            return Integer.parseInt(userChoice);
+        }
+    }
+    private static boolean integerCheck(String input) {
+        try {
+            float integerValue = Integer.parseInt(input);
+            return true;
+        }
+        catch (NumberFormatException e) {
+            return false;
+        }
+    }
+    @FXML private void onSetThreadCountAction() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Enter Value");
+        dialog.setHeaderText("Please enter a DECIMAL number for the thread count");
+        dialog.setContentText("Value:");
+
+        dialog.showAndWait().ifPresent(userChoice -> {
+            Integer choice = processUserChoice(userChoice);
+            if(choice!=null){
+                String RESOURCE = "/Server_Web_exploded/thread-count";
+                RequestBody formBody = new FormBody.Builder()
+                        .add("choice", String.valueOf(choice))
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url(BASE_URL + RESOURCE)
+                        .post(formBody)
+                        .build();
+                Call call = HTTP_CLIENT.newCall(request);
+                call.enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        // Handle failure here
+                        e.printStackTrace();
+                    }
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        if(response.isSuccessful()){
+                            Platform.runLater(() -> {
+                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                alert.setTitle("Thread count response");
+                                alert.setHeaderText(null);
+                                alert.setContentText("Thread count updated successfully");
+                                alert.showAndWait();
+                            });
+                        }
+
+                    }
+                });
+
+            }
+
+        });
 
 
     }

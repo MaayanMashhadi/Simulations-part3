@@ -20,7 +20,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="Tomcat 10.0.11" level="application_server_libraries" />
-    <orderEntry type="module" module-name="Facade" />
+    <orderEntry type="module" module-name="DTO" />
     <orderEntry type="module" module-name="Logic" />
     <orderEntry type="module-library" scope="PROVIDED">
       <library>
@@ -33,10 +33,10 @@
           <root url="jar://$MODULE_DIR$/web/WEB-INF/lib/gson-2.8.8-sources.jar!/" />
           <root url="file://$MODULE_DIR$/../Admin/src" />
           <root url="file://$MODULE_DIR$/../GUI/src" />
-          <root url="file://$MODULE_DIR$/Facade/src" />
           <root url="file://$MODULE_DIR$/Logic/src" />
           <root url="file://$MODULE_DIR$/src" />
           <root url="file://$MODULE_DIR$/../User/src" />
+          <root url="file://$MODULE_DIR$/DTO/src" />
         </SOURCES>
       </library>
     </orderEntry>
@@ -51,10 +51,10 @@
           <root url="jar://$MODULE_DIR$/web/WEB-INF/lib/gson-2.8.8-sources.jar!/" />
           <root url="file://$MODULE_DIR$/../Admin/src" />
           <root url="file://$MODULE_DIR$/../GUI/src" />
-          <root url="file://$MODULE_DIR$/Facade/src" />
           <root url="file://$MODULE_DIR$/Logic/src" />
           <root url="file://$MODULE_DIR$/src" />
           <root url="file://$MODULE_DIR$/../User/src" />
+          <root url="file://$MODULE_DIR$/DTO/src" />
         </SOURCES>
       </library>
     </orderEntry>
