@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="508.0" prefWidth="792.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.RequestsController">
+  <content>
+    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="504.0" prefWidth="788.0">
+         <children>
+            <BorderPane layoutY="18.0">
+               <top>
+                  <GridPane prefHeight="168.0" prefWidth="792.0" BorderPane.alignment="CENTER">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="370.9999771118164" minWidth="0.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="651.3333257039388" minWidth="10.0" prefWidth="147.66669718424475" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="651.3333257039388" minWidth="10.0" prefWidth="67.33333333333331" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="491.99999999999994" minWidth="10.0" prefWidth="489.99999999999994" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints maxHeight="156.0" minHeight="0.0" prefHeight="29.666670481363933" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="324.0" minHeight="10.0" prefHeight="41.66666666666666" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="324.0" minHeight="10.0" prefHeight="40.33333333333333" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="324.0" minHeight="10.0" prefHeight="43.33333333333333" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label text="New Request" GridPane.columnIndex="1">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </Label>
+                        <Label text="Simulation name:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label text="Amount of running" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label text="Termination conditions" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <RadioButton mnemonicParsing="false" text="By user" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                        <RadioButton mnemonicParsing="false" text="By ticks/seconds" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                        <TextField GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <TextField GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        <Label fx:id="answerSimulationNameLabal" prefHeight="17.0" prefWidth="115.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                        <Label fx:id="answerAmountRunningLabel" prefHeight="17.0" prefWidth="119.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                     </children>
+                  </GridPane>
+               </top>
+               <bottom>
+                  <TableView fx:id="rewuestTable" prefHeight="265.0" prefWidth="792.0" BorderPane.alignment="CENTER">
+                    <columns>
+                      <TableColumn prefWidth="75.0" text="C1" />
+                      <TableColumn prefWidth="75.0" text="C2" />
+                    </columns>
+                  </TableView>
+               </bottom>
+            </BorderPane>
+         </children></AnchorPane>
+  </content>
+</ScrollPane>
