@@ -28,7 +28,7 @@
                 <RowConstraints maxHeight="145.00000762939453" minHeight="10.0" prefHeight="49.333333333333314" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Button mnemonicParsing="false" text="Login" GridPane.columnIndex="1" />
+                  <Button mnemonicParsing="false" onAction="#onButtonLogin" text="Login" GridPane.columnIndex="1" />
                   <TextField fx:id="usernameTextField" promptText="Write username here" GridPane.columnIndex="2" />
                </children>
             </GridPane>
