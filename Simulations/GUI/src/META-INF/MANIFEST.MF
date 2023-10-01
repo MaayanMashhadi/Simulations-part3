@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
-Main-Class: MainApp
+MainUser-Class: MainApp
 Class-Path: Logic.jar Facade.jar
 
