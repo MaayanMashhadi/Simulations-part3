@@ -17,10 +17,10 @@ public class TerminateConditionDTO {
         return byUser;
     }
 
-    public TerminateConditionDTO(Integer seconds, Integer ticks) {
+    public TerminateConditionDTO(Integer seconds, Integer ticks, String byUser) {
         this.seconds = seconds;
         this.ticks = ticks;
-        byUser = "End by user";
+        this.byUser = byUser;
     }
 
 

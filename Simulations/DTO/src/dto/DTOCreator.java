@@ -101,13 +101,13 @@ public class DTOCreator {
         TerminateConditionDTO terminateConditionDTO;
         for(TerminateCondition terminateCondition : terminateConditions){
             if(terminateCondition instanceof TerminateBySeconds){
-                terminateConditionDTO = new TerminateConditionDTO(terminateCondition.getCount(), null);
+                terminateConditionDTO = new TerminateConditionDTO(terminateCondition.getCount(), null, null);
             }
             else if(terminateCondition instanceof TerminateByTicks){
-                terminateConditionDTO = new TerminateConditionDTO(null, terminateCondition.getCount());
+                terminateConditionDTO = new TerminateConditionDTO(null, terminateCondition.getCount(), null);
             }
             else{
-                terminateConditionDTO = new TerminateConditionDTO(null, null);
+                terminateConditionDTO = new TerminateConditionDTO(null, null, "by user");
             }
 
             terminateConditionDTOS.add(terminateConditionDTO);
