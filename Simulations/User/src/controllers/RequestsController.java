@@ -1,11 +1,16 @@
 package controllers;
 
+import com.google.gson.Gson;
+import dto.RequestDetailsDTO;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import okhttp3.*;
 
 import java.io.IOException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import static controllers.LoginController.BASE_URL;
 import static controllers.LoginController.HTTP_CLIENT;
@@ -17,14 +22,18 @@ public class RequestsController {
     @FXML private RadioButton byUserRadioChoice;
     @FXML private RadioButton byTicksRadioChoice;
     @FXML private Label radioChoiceLabel;
+    @FXML private TableView requestTable;
     private Integer choiceOfTicks = null;
     private Integer choiceOfSeconds = null;
     private Integer choiceOfUser = null;
+    private RequestDetailsDTO[] requestsArray;
+    private boolean isNotNull = false;
 
     public void initialize(){
         ToggleGroup toggleGroup = new ToggleGroup();
         byUserRadioChoice.setToggleGroup(toggleGroup);
         byTicksRadioChoice.setToggleGroup(toggleGroup);
+        ScheduledExecutorService updateRequestsTable = Executors.newSingleThreadScheduledExecutor();
     }
 
     @FXML
@@ -137,33 +146,7 @@ public class RequestsController {
     @FXML private void onSubmitButton() {
         if (!simulationNameTextfied.getText().isEmpty() &&
                 !amountRunningTextField.getText().isEmpty() && (choiceOfTicks != null || choiceOfSeconds != null || choiceOfUser != null)) {
-            String RESOURCE = "/Server_Web_exploded/request-process-servlet";
-            String simulationName = simulationNameTextfied.getText();
-            String amountOfRunning = amountRunningTextField.getText();
-            RequestBody requestBody = new FormBody.Builder()
-                    .add("simulationName", simulationName)
-                    .add("amountOfRunning", amountOfRunning)
-                    .add("byUser", String.valueOf(choiceOfUser))
-                    .add("byTicks", String.valueOf(choiceOfTicks))
-                    .add("bySeconds", String.valueOf(choiceOfSeconds))
-                    .build();
-
-            Request request = new Request.Builder()
-                    .url(BASE_URL + RESOURCE)
-                    .post(requestBody)
-                    .build();
-            Call call = HTTP_CLIENT.newCall(request);
-            call.enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-
-                }
-
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-
-                }
-            });
+           requestsRequest();
 
         }
         else{
@@ -175,5 +158,54 @@ public class RequestsController {
         }
     }
 
+    private void requestsRequest(){
+        String RESOURCE = "/Server_Web_exploded/request-process-servlet";
+        String simulationName = simulationNameTextfied.getText();
+        String amountOfRunning = amountRunningTextField.getText();
+        RequestBody requestBody = new FormBody.Builder()
+                .add("simulationName", simulationName)
+                .add("amountOfRunning", amountOfRunning)
+                .add("byUser", String.valueOf(choiceOfUser))
+                .add("byTicks", String.valueOf(choiceOfTicks))
+                .add("bySeconds", String.valueOf(choiceOfSeconds))
+                .build();
+
+        Request request = new Request.Builder()
+                .url(BASE_URL + RESOURCE)
+                .post(requestBody)
+                .build();
+        Call call = HTTP_CLIENT.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(response.isSuccessful()){
+                    String jsonResponse = response.body().string();
+                    Gson gson = new Gson();
+                    requestsArray = gson.fromJson(jsonResponse, RequestDetailsDTO[].class);
+                }
+
+            }
+        });
+
+    }
+
+    private void updateRequestsTable(){
+        if(!isNotNull){
+            requestsRequest();
+        }
+        if (requestsArray != null) {
+            isNotNull = true;
+            Platform.runLater(() -> {
+                requestTable.getItems().clear();
+            });
+
+        }
+    }
 
 }

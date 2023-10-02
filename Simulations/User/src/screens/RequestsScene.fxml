@@ -47,12 +47,12 @@
                <bottom>
                   <TableView fx:id="requestTable" prefHeight="265.0" prefWidth="792.0" BorderPane.alignment="CENTER">
                     <columns>
-                      <TableColumn prefWidth="125.99998986721039" text="Simulation's Number" />
-                      <TableColumn prefWidth="123.99999237060547" text="Simulation Name" />
-                        <TableColumn prefWidth="118.66664123535156" text="Amount of Running" />
-                        <TableColumn prefWidth="129.66665649414062" text="Approved \ Cancelled" />
-                        <TableColumn prefWidth="151.3333740234375" text="Still Running (num)" />
-                        <TableColumn prefWidth="187.33331298828125" text="Ending (num)" />
+                      <TableColumn fx:id="simulationNamberCol" prefWidth="125.99998986721039" text="Simulation's Number" />
+                      <TableColumn fx:id="simulationNameCol" prefWidth="123.99999237060547" text="Simulation Name" />
+                        <TableColumn fx:id="amountOfRunningCol" prefWidth="118.66664123535156" text="Amount of Running" />
+                        <TableColumn fx:id="approvedCol" prefWidth="129.66665649414062" text="Approved \ Cancelled" />
+                        <TableColumn fx:id="stillRunningCol" prefWidth="151.3333740234375" text="Still Running (num)" />
+                        <TableColumn fx:id="endingCol" prefWidth="187.33331298828125" text="Ending (num)" />
                     </columns>
                   </TableView>
                </bottom>
