@@ -21,7 +21,7 @@
           <root url="file://$MODULE_DIR$/../Server/Logic/src" />
           <root url="file://$MODULE_DIR$/../Server/src" />
           <root url="file://$MODULE_DIR$/../User/src" />
-          <root url="file://$MODULE_DIR$/../Server/DTO/src" />
+          <root url="file://$MODULE_DIR$/../DTO/src" />
         </SOURCES>
       </library>
     </orderEntry>

@@ -31,6 +31,17 @@ public class MainController {
     }
     @FXML public void setOnActionRequestsButton() {
 
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/screens/RequestsScene.fxml"));
+            Parent newSceneRoot = fxmlLoader.load();
+            RequestsController managementController = fxmlLoader.getController();
 
+            hboxScene.getChildren().clear();
+            hboxScene.getChildren().add(newSceneRoot);
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -13,9 +13,10 @@
                   <GridPane prefHeight="168.0" prefWidth="792.0" BorderPane.alignment="CENTER">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="370.9999771118164" minWidth="0.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="651.3333257039388" minWidth="10.0" prefWidth="147.66669718424475" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="651.3333257039388" minWidth="10.0" prefWidth="67.33333333333331" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="491.99999999999994" minWidth="10.0" prefWidth="489.99999999999994" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="651.3333257039388" minWidth="10.0" prefWidth="138.00001525878906" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="651.3333257039388" minWidth="3.3333257039388116" prefWidth="79.33333333333334" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="491.99999999999994" minWidth="0.0" prefWidth="115.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="491.99999999999994" minWidth="10.0" prefWidth="369.0" />
                     </columnConstraints>
                     <rowConstraints>
                         <RowConstraints maxHeight="156.0" minHeight="0.0" prefHeight="29.666670481363933" vgrow="SOMETIMES" />
@@ -32,20 +33,26 @@
                         <Label text="Simulation name:" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Label text="Amount of running" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <Label text="Termination conditions" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                        <RadioButton mnemonicParsing="false" text="By user" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                        <RadioButton mnemonicParsing="false" text="By ticks/seconds" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                        <TextField GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                        <TextField GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                        <Label fx:id="answerSimulationNameLabal" prefHeight="17.0" prefWidth="115.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                        <Label fx:id="answerAmountRunningLabel" prefHeight="17.0" prefWidth="119.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                        <RadioButton fx:id="byUserRadioChoice" mnemonicParsing="false" onAction="#handleRadioButtonClick" text="By user" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                        <RadioButton fx:id="byTicksRadioChoice" mnemonicParsing="false" onAction="#handleRadioButtonClick" text="By ticks/seconds" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                        <TextField fx:id="amountRunningTextField" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <TextField fx:id="simulationNameTextfied" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        <Label fx:id="simulationNameLabel" prefHeight="17.0" prefWidth="111.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                        <Label fx:id="amountRunningLabel" prefHeight="17.0" prefWidth="103.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                        <Button fx:id="submitButton" mnemonicParsing="false" onAction="#onSubmitButton" text="submit" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+                        <Label fx:id="radioChoiceLabel" prefHeight="17.0" prefWidth="176.0" GridPane.columnIndex="4" GridPane.rowIndex="3" />
                      </children>
                   </GridPane>
                </top>
                <bottom>
-                  <TableView fx:id="rewuestTable" prefHeight="265.0" prefWidth="792.0" BorderPane.alignment="CENTER">
+                  <TableView fx:id="requestTable" prefHeight="265.0" prefWidth="792.0" BorderPane.alignment="CENTER">
                     <columns>
-                      <TableColumn prefWidth="75.0" text="C1" />
-                      <TableColumn prefWidth="75.0" text="C2" />
+                      <TableColumn prefWidth="125.99998986721039" text="Simulation's Number" />
+                      <TableColumn prefWidth="123.99999237060547" text="Simulation Name" />
+                        <TableColumn prefWidth="118.66664123535156" text="Amount of Running" />
+                        <TableColumn prefWidth="129.66665649414062" text="Approved \ Cancelled" />
+                        <TableColumn prefWidth="151.3333740234375" text="Still Running (num)" />
+                        <TableColumn prefWidth="187.33331298828125" text="Ending (num)" />
                     </columns>
                   </TableView>
                </bottom>

@@ -35,7 +35,7 @@
           <root url="file://$MODULE_DIR$/Logic/src" />
           <root url="file://$MODULE_DIR$/src" />
           <root url="file://$MODULE_DIR$/../User/src" />
-          <root url="file://$MODULE_DIR$/DTO/src" />
+          <root url="file://$MODULE_DIR$/../DTO/src" />
         </SOURCES>
       </library>
     </orderEntry>
@@ -53,7 +53,7 @@
           <root url="file://$MODULE_DIR$/Logic/src" />
           <root url="file://$MODULE_DIR$/src" />
           <root url="file://$MODULE_DIR$/../User/src" />
-          <root url="file://$MODULE_DIR$/DTO/src" />
+          <root url="file://$MODULE_DIR$/../DTO/src" />
         </SOURCES>
       </library>
     </orderEntry>

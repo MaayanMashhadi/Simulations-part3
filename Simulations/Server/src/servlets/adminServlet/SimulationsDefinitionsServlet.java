@@ -5,7 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import utils.SimulationsDefinitionsManager;
+import utils.admin.SimulationsDefinitionsManager;
 import java.io.IOException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

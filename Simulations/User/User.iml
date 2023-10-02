@@ -22,7 +22,6 @@
           <root url="jar://$MODULE_DIR$/../Server/web/WEB-INF/lib/gson-2.8.8-sources.jar!/" />
           <root url="file://$MODULE_DIR$/../Admin/src" />
           <root url="file://$MODULE_DIR$/../GUI/src" />
-          <root url="file://$MODULE_DIR$/../Server/DTO/src" />
           <root url="file://$MODULE_DIR$/../Server/Logic/src" />
           <root url="file://$MODULE_DIR$/../Server/src" />
           <root url="file://$MODULE_DIR$/src" />
@@ -32,6 +31,7 @@
           <root url="file://$MODULE_DIR$/../out/artifacts/Server_Web_exploded/WEB-INF/lib/Server/Logic/src" />
           <root url="file://$MODULE_DIR$/../out/artifacts/Server_Web_exploded/WEB-INF/lib/Server/src" />
           <root url="file://$MODULE_DIR$/../out/artifacts/Server_Web_exploded/WEB-INF/lib/User/src" />
+          <root url="file://$MODULE_DIR$/../DTO/src" />
         </SOURCES>
       </library>
     </orderEntry>

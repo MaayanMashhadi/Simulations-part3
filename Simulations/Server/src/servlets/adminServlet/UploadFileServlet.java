@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import dto.*;
-import utils.SimulationsDefinitionsManager;
+import utils.admin.SimulationsDefinitionsManager;
 
 import javax.xml.bind.JAXBException;
 import java.io.BufferedReader;

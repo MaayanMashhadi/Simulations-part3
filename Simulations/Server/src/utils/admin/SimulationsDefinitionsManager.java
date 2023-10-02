@@ -1,4 +1,4 @@
-package utils;
+package utils.admin;
 
 import dto.WorldDefinitionDTO;
 
