@@ -4,29 +4,35 @@ import dto.RequestDetailsDTO;
 import dto.WorldDefinitionDTO;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RequestsManager {
-    List<RequestDetailsDTO> allRequests;
+   private Map<String, List<RequestDetailsDTO>> requestsPerUser;
+    //List<RequestDetailsDTO> allRequests;
 
     public RequestsManager(){
-        allRequests = new ArrayList<>();
+        //allRequests = new ArrayList<>();
+        requestsPerUser = new HashMap<>();
     }
 
-    public void addRequest(RequestDetailsDTO requestDetailsDTO) {
-
-        allRequests.add(requestDetailsDTO);
+    public void addRequestByUser(String user, RequestDetailsDTO requestDetailsDTO){
+        if(!requestsPerUser.containsKey(user)){
+            requestsPerUser.put(user, new ArrayList<>());
+        }
+        requestsPerUser.get(user).add(requestDetailsDTO);
     }
-
-    public List<RequestDetailsDTO> getAllRequests() {
-        return allRequests;
+    public List<RequestDetailsDTO> getAllRequestsByUser(String user){
+        return requestsPerUser.get(user);
     }
-    public RequestDetailsDTO getRequestByName(String name){
-        return allRequests.stream()
+    public RequestDetailsDTO getRequestByName(String user, String name){
+        return requestsPerUser.get(user).stream()
                 .filter(requestDetailsDTO -> requestDetailsDTO.getSimulationName().equals(name))
                 .findFirst().orElse(null);
     }
-    public void removeSimulationByName(String name){
-        allRequests.removeIf(requestDetailsDTO -> requestDetailsDTO.getSimulationName().equals(name));
+    public void removeSimulationByName(String user, String name){
+        requestsPerUser.get(user).removeIf(requestDetailsDTO -> requestDetailsDTO.getSimulationName().equals(name));
     }
+
 }

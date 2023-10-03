@@ -3,14 +3,39 @@ package dto;
 import java.util.List;
 
 public class RequestDetailsDTO {
+    private int requestNumber;
     private String simulationName;
     private int amountOfRunning;
+    private String requestStatus;
+    private int amountOfSimulationsRuunning;
+    private int amountOfSimulationEnding;
     private List<TerminateConditionDTO> terminateConditions;
 
-    public RequestDetailsDTO(String simulationName, int amountOfRunning, List<TerminateConditionDTO> terminateConditions) {
+    public RequestDetailsDTO(int requestNumber,String simulationName, int amountOfRunning,
+                             String requestStatus, int amountOfSimulationsRuunning, int amountOfSimulationEnding, List<TerminateConditionDTO> terminateConditions) {
+        this.requestNumber = requestNumber;
         this.simulationName = simulationName;
         this.amountOfRunning = amountOfRunning;
+        this.requestStatus = requestStatus;
+        this.amountOfSimulationsRuunning = amountOfSimulationsRuunning;
+        this.amountOfSimulationEnding = amountOfSimulationEnding;
         this.terminateConditions = terminateConditions;
+    }
+
+    public int getRequestNumber() {
+        return requestNumber;
+    }
+
+    public String getRequestStatus() {
+        return requestStatus;
+    }
+
+    public int getAmountOfSimulationsRuunning() {
+        return amountOfSimulationsRuunning;
+    }
+
+    public int getAmountOfSimulationEnding() {
+        return amountOfSimulationEnding;
     }
 
     public String getSimulationName() {

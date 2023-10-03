@@ -47,7 +47,7 @@
                <bottom>
                   <TableView fx:id="requestTable" prefHeight="265.0" prefWidth="792.0" BorderPane.alignment="CENTER">
                     <columns>
-                      <TableColumn fx:id="simulationNamberCol" prefWidth="125.99998986721039" text="Simulation's Number" />
+                      <TableColumn fx:id="requestNumberCol" prefWidth="125.99998986721039" text="Request's Number" />
                       <TableColumn fx:id="simulationNameCol" prefWidth="123.99999237060547" text="Simulation Name" />
                         <TableColumn fx:id="amountOfRunningCol" prefWidth="118.66664123535156" text="Amount of Running" />
                         <TableColumn fx:id="approvedCol" prefWidth="129.66665649414062" text="Approved \ Cancelled" />

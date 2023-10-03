@@ -159,7 +159,7 @@ public class RequestsController {
     }
 
     private void requestsRequest(){
-        String RESOURCE = "/Server_Web_exploded/request-process-servlet";
+        String RESOURCE = "/Server_Web_exploded/request-process-user-servlet";
         String simulationName = simulationNameTextfied.getText();
         String amountOfRunning = amountRunningTextField.getText();
         RequestBody requestBody = new FormBody.Builder()
@@ -203,6 +203,10 @@ public class RequestsController {
             isNotNull = true;
             Platform.runLater(() -> {
                 requestTable.getItems().clear();
+                for(RequestDetailsDTO requestDetailsDTO : requestsArray){
+                    requestTable.getItems().add(requestDetailsDTO);
+                }
+
             });
 
         }

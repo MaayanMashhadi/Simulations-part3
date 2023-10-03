@@ -13,9 +13,9 @@ public class MainUser extends Application {
 //TODO : need to change to login agaain!
     @Override
     public void start(Stage primaryStage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("screens/MainScene.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("screens/LoginScene.fxml"));
         Parent root = fxmlLoader.load();
-        MainController controller = fxmlLoader.getController();
+        LoginController controller = fxmlLoader.getController();
 
         Scene scene = new Scene(root);
         primaryStage.setTitle("Predictions");

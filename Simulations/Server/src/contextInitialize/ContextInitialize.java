@@ -15,6 +15,7 @@ public class ContextInitialize implements ServletContextListener {
                 .setAttribute("simulationsDefinitionsManager",  new SimulationsDefinitionsManager());
         servletContextEvent.getServletContext().setAttribute("facade",new Facade());
         servletContextEvent.getServletContext().setAttribute("requestDetailsManager", new RequestsManager());
+        servletContextEvent.getServletContext().setAttribute("requestsCounter", 1);
 
     }
 

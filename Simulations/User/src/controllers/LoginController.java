@@ -3,8 +3,12 @@ package controllers;
 import jakarta.servlet.http.HttpServletResponse;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 import okhttp3.*;
 
 import java.io.IOException;
@@ -39,10 +43,30 @@ public class LoginController {
                         alert.setHeaderText(null);
                         try {
                             alert.setContentText("Login successful" + response.body().string());
+                            alert.showAndWait();
+
+                            // Get the current stage (login stage)
+                            Stage loginStage = (Stage) usernameTextField.getScene().getWindow();
+
+                            // Close the login stage
+                            loginStage.close();
+
+                            // Create a new stage for the new scene
+                            Stage newStage = new Stage();
+
+                            // Load and set the FXML for the new scene
+                            FXMLLoader loader = new FXMLLoader(getClass().getResource("/screens/MainScene.fxml"));
+                            Parent root = loader.load();
+                            Scene newScene = new Scene(root);
+
+                            // Set the new scene on the new stage
+                            newStage.setScene(newScene);
+
+                            // Show the new stage
+                            newStage.show();
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
-                        alert.showAndWait();
                     });
                 }
                 else if (response.code() == HttpServletResponse.SC_UNAUTHORIZED) {
