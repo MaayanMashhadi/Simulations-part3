@@ -26,8 +26,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static controller.MainController.HTTP_CLIENT;
-
 
 public class ManagementController {
     @FXML private TextField filePathTextField;
@@ -88,7 +86,7 @@ public class ManagementController {
                 .url(BASE_URL + RESOURCE)
                 .get()
                 .build();
-        Call call = HTTP_CLIENT.newCall(request);
+        Call call = MainController.HTTP_CLIENT.newCall(request);
         List<Double> listOfQueue = new ArrayList<>();
         call.enqueue(new okhttp3.Callback() {
             @Override
@@ -173,7 +171,7 @@ public class ManagementController {
                         .url(BASE_URL + RESOURCE)
                         .post(formBody)
                         .build();
-                Call call = HTTP_CLIENT.newCall(request);
+                Call call = MainController.HTTP_CLIENT.newCall(request);
                 call.enqueue(new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
@@ -225,7 +223,7 @@ public class ManagementController {
                 .post(body)
                 .build();
 
-        Call call = HTTP_CLIENT.newCall(request);
+        Call call = MainController.HTTP_CLIENT.newCall(request);
 
 
 
@@ -283,7 +281,7 @@ public class ManagementController {
                 .get()
                 .build();
 
-        Call call = HTTP_CLIENT.newCall(request);
+        Call call = MainController.HTTP_CLIENT.newCall(request);
         call.enqueue(new Callback() {
                          @Override
                          public void onFailure(Call call, IOException e) {

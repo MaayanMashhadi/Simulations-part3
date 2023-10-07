@@ -46,7 +46,7 @@ public class RequestProcessServlet extends HttpServlet {
             if (terminateConditionDTO != null) {
                 terminateConditions.add(terminateConditionDTO);
                 requestDetailsDTO = new
-                        RequestDetailsDTO((Integer)getServletContext().getAttribute("requestsCounter"),
+                        RequestDetailsDTO(username,(Integer)getServletContext().getAttribute("requestsCounter"),
                         simulationName, Integer.parseInt(amountOfRunning),"pending",0,0, terminateConditions);
                 ((RequestsManager) getServletContext().getAttribute("requestDetailsManager")).addRequestByUser(username, requestDetailsDTO);
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();

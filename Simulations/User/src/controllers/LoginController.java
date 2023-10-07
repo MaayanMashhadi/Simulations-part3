@@ -10,12 +10,13 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import okhttp3.*;
+import utils.HttpClientUtil;
 
 import java.io.IOException;
 
 public class LoginController {
     public final static String BASE_URL = "http://localhost:8080";
-    public final static OkHttpClient HTTP_CLIENT = new OkHttpClient();
+    public final static OkHttpClient HTTP_CLIENT = HttpClientUtil.HTTP_CLIENT;
     @FXML private TextField usernameTextField;
 
     @FXML private void onButtonLogin(){

@@ -3,14 +3,19 @@ package controllers;
 import com.google.gson.Gson;
 import dto.RequestDetailsDTO;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import okhttp3.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static controllers.LoginController.BASE_URL;
 import static controllers.LoginController.HTTP_CLIENT;
@@ -23,6 +28,13 @@ public class RequestsController {
     @FXML private RadioButton byTicksRadioChoice;
     @FXML private Label radioChoiceLabel;
     @FXML private TableView requestTable;
+//    private TableColumn<RequestDetailsDTO, Integer> reqNumCol;
+//    private TableColumn<RequestDetailsDTO, String> simNameCol;
+//    private TableColumn<RequestDetailsDTO, Integer> amountOfRunningCol;
+//    private TableColumn<RequestDetailsDTO, String> approvedCol;
+//    private TableColumn<RequestDetailsDTO, Integer> stillRunningCol;
+//    private TableColumn<RequestDetailsDTO, Integer> endingCol;
+    private ObservableList<RequestDetailsDTO> dataListTable;
     private Integer choiceOfTicks = null;
     private Integer choiceOfSeconds = null;
     private Integer choiceOfUser = null;
@@ -30,10 +42,68 @@ public class RequestsController {
     private boolean isNotNull = false;
 
     public void initialize(){
+//        reqNumCol = new TableColumn<>("Request's Number");
+//        reqNumCol.setCellValueFactory(new PropertyValueFactory<>("entityName"));
         ToggleGroup toggleGroup = new ToggleGroup();
         byUserRadioChoice.setToggleGroup(toggleGroup);
         byTicksRadioChoice.setToggleGroup(toggleGroup);
         ScheduledExecutorService updateRequestsTable = Executors.newSingleThreadScheduledExecutor();
+        dataListTable = FXCollections.observableArrayList();
+
+        updateRequestsTable.scheduleAtFixedRate(() -> {
+            requestAllRequests();
+        }, 0, 1, TimeUnit.SECONDS);
+    }
+
+    private void requestAllRequests(){
+        String RESOURCE = "/Server_Web_exploded/all-requests";
+        Request request = new Request.Builder()
+                .url(BASE_URL + RESOURCE)
+                .get()
+                .build();
+        Call call = HTTP_CLIENT.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                if(response.isSuccessful()){
+                    String jsonResponse = response.body().string();
+                    Gson gson = new Gson();
+                    requestsArray = gson.fromJson(jsonResponse, RequestDetailsDTO[].class);
+                    if(requestsArray != null){
+                        for(RequestDetailsDTO requestDetailsDTO : requestsArray){
+                            boolean isFound = false;
+                            for(RequestDetailsDTO existingData : dataListTable){
+                                if(requestDetailsDTO.getRequestNumber() == existingData.getRequestNumber()){
+                                    //TODO : need to add the still running and ending
+                                    isFound = true;
+                                    break;
+                                }
+                            }
+                            if(!isFound){
+                                dataListTable.add(new RequestDetailsDTO(requestDetailsDTO.getRequestNumber(),
+                                        requestDetailsDTO.getSimulationName(), requestDetailsDTO.getAmountOfRunning(),
+                                        requestDetailsDTO.getRequestStatus(), requestDetailsDTO.getAmountOfSimulationsRuunning(),
+                                        requestDetailsDTO.getAmountOfSimulationEnding(), requestDetailsDTO.getTerminateConditions()));
+                            }
+                        }
+                        Platform.runLater(() ->{
+
+
+                            requestTable.setItems(dataListTable);
+
+
+                        });
+                    }
+
+                }
+            }
+        });
+
     }
 
     @FXML
@@ -188,6 +258,29 @@ public class RequestsController {
                     String jsonResponse = response.body().string();
                     Gson gson = new Gson();
                     requestsArray = gson.fromJson(jsonResponse, RequestDetailsDTO[].class);
+                    for(RequestDetailsDTO requestDetailsDTO : requestsArray){
+                        boolean isFound = false;
+                        for(RequestDetailsDTO existingData : dataListTable){
+                            if(requestDetailsDTO.getRequestNumber() == existingData.getRequestNumber()){
+                                //TODO : need to add the still running and ending
+                                isFound = true;
+                                break;
+                            }
+                        }
+                        if(!isFound){
+                            dataListTable.add(new RequestDetailsDTO(requestDetailsDTO.getRequestNumber(),
+                                    requestDetailsDTO.getSimulationName(), requestDetailsDTO.getAmountOfRunning(),
+                                    requestDetailsDTO.getRequestStatus(), requestDetailsDTO.getAmountOfSimulationsRuunning(),
+                                    requestDetailsDTO.getAmountOfSimulationEnding(), requestDetailsDTO.getTerminateConditions()));
+                        }
+                    }
+                    Platform.runLater(() ->{
+
+
+                        requestTable.setItems(dataListTable);
+
+
+                    });
                 }
 
             }
@@ -196,20 +289,36 @@ public class RequestsController {
     }
 
     private void updateRequestsTable(){
-        if(!isNotNull){
+//        if(!isNotNull){
             requestsRequest();
-        }
-        if (requestsArray != null) {
-            isNotNull = true;
-            Platform.runLater(() -> {
-                requestTable.getItems().clear();
-                for(RequestDetailsDTO requestDetailsDTO : requestsArray){
-                    requestTable.getItems().add(requestDetailsDTO);
-                }
-
-            });
-
-        }
+//        }
+//        if (requestsArray != null) {
+//            boolean isFound = false;
+//            isNotNull = true;
+//            for(RequestDetailsDTO requestDetailsDTO : requestsArray){
+//                isFound = false;
+//                for(RequestDetailsDTO existingData : dataListTable){
+//                    if(requestDetailsDTO.getRequestNumber() == existingData.getRequestNumber()){
+//                        //TODO : need to add the still running and ending
+//                        isFound = true;
+//                        break;
+//                    }
+//                }
+//                if(!isFound){
+//                    dataListTable.add(new RequestDetailsDTO(requestDetailsDTO.getRequestNumber(),
+//                            requestDetailsDTO.getSimulationName(), requestDetailsDTO.getAmountOfRunning(),
+//                            requestDetailsDTO.getRequestStatus(), requestDetailsDTO.getAmountOfSimulationsRuunning(),
+//                            requestDetailsDTO.getAmountOfSimulationEnding(), requestDetailsDTO.getTerminateConditions()));
+//                }
+//            }
+//            Platform.runLater(() ->{
+//
+//                requestTable.setItems(dataListTable);
+//
+//
+//            });
+//
+//        }
     }
 
 }

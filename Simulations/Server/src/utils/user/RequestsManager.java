@@ -17,6 +17,10 @@ public class RequestsManager {
         requestsPerUser = new HashMap<>();
     }
 
+    public Map<String, List<RequestDetailsDTO>> getRequestsPerUser() {
+        return requestsPerUser;
+    }
+
     public void addRequestByUser(String user, RequestDetailsDTO requestDetailsDTO){
         if(!requestsPerUser.containsKey(user)){
             requestsPerUser.put(user, new ArrayList<>());
