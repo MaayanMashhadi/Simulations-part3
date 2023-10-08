@@ -13,7 +13,8 @@
                <center>
                   <ScrollPane prefHeight="491.0" prefWidth="891.0" BorderPane.alignment="CENTER">
                      <content>
-                         <TableView fx:id="requestTable" prefHeight="476.0" prefWidth="913.0">
+                         <TableView fx:id="requestTable" onMouseClicked="#approveOrCancel" prefHeight="482.0" prefWidth="913.0">
+
                              <columns>
                                  <TableColumn fx:id="userNameCol" prefWidth="125.99998986721039" text="User Name">
                                      <cellValueFactory>

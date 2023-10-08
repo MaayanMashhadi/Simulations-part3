@@ -12,7 +12,11 @@ public class RequestDetailsDTO {
     private int amountOfSimulationEnding;
     private List<TerminateConditionDTO> terminateConditions;
 
-    public RequestDetailsDTO(String userName,int requestNumber,String simulationName, int amountOfRunning,
+    public void setRequestStatus(String requestStatus) {
+        this.requestStatus = requestStatus;
+    }
+
+    public RequestDetailsDTO(String userName, int requestNumber, String simulationName, int amountOfRunning,
                              String requestStatus, int amountOfSimulationsRuunning, int amountOfSimulationEnding, List<TerminateConditionDTO> terminateConditions) {
         this.requestNumber = requestNumber;
         this.simulationName = simulationName;
