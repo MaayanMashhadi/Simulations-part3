@@ -25,6 +25,7 @@ public class Simulation implements Runnable {
     private int id;
     private  Date date;
     private WorldInstance worldInstance;
+    private SimulationDTO simulationDTO;
 
     private WorldDefinition worldDefinition;
     private SimulationOutput simulationOutput;
@@ -39,6 +40,7 @@ public class Simulation implements Runnable {
     private SimulationHistory simulationHistory;
     private boolean isRunning = false;
     private Object pauseLock = new Object();
+    private DTOCreator dtoCreator = new DTOCreator();
 
     public void setSimulationHistory(SimulationHistory simulationHistory) {
         this.simulationHistory = simulationHistory;
@@ -112,6 +114,7 @@ public class Simulation implements Runnable {
         }
         amountOfEntitiesByTicks.put(ticks, amountOfEntityList);
         currentDetailsDTO = new SimulationCurrentDetailsDTO(ticks, seconds, amountOfEntities, amountOfEntitiesByTicks);
+
     }
 
     public SimulationCurrentDetailsDTO getCurrentDetailsDTO() {
@@ -127,8 +130,11 @@ public class Simulation implements Runnable {
     }
 
     public void run() {
+        simulationDTO = dtoCreator.createSimulationDTO(worldDefinition, this, simulationOutput);
         createDetails(0, 0, worldInstance.getWorldDefinition().getPopulation());
+        simulationDTO.setCurrentDetailsDTO(currentDetailsDTO);
         isRunning = true;
+        simulationDTO.setRunning(isRunning);
         endSimulation = false;
         simulationOutput = new SimulationOutput(id, worldInstance);
         worldInstance.initialize();
@@ -182,12 +188,18 @@ public class Simulation implements Runnable {
                 }
 
                 createDetails(ticks, elapsedSeconds, worldInstance.getWorldDefinition().getPopulation());
+                simulationDTO.setCurrentDetailsDTO(currentDetailsDTO);
             }
             //endSimulation = true;
             simulationEndedLatch.countDown();
 
         }
     }
+
+    public SimulationDTO getSimulationDTO() {
+        return simulationDTO;
+    }
+
     private void actionOnticks(Action action, EntityInstance primaryEntityInstance, int ticks){
         boolean isVisit = false;
         if(action.getContextDefinition().getPrimaryEntity().getName().equals(primaryEntityInstance.getEntityDefinition().getName())){
@@ -296,9 +308,11 @@ public class Simulation implements Runnable {
 
     public void endSimulation(){
         endSimulation = false;
+        simulationDTO.setEndSimualtion(endSimulation);
         simulationOutput.setReasonsOfEnding("The simulation was ended because user stop it");
        if(Thread.currentThread().isInterrupted()){
            endSimulation = true;
+           simulationDTO.setEndSimualtion(endSimulation);
            return;
        }
        List<TerminateCondition> terminateConditions = worldInstance.getTerminateConditions();
@@ -308,6 +322,7 @@ public class Simulation implements Runnable {
                    simulationOutput.setReasonsOfEnding("the terminate condition by ticks" +
                            " was invoked");
                    endSimulation = true;
+                   simulationDTO.setEndSimualtion(endSimulation);
                    return;
                }
            }
@@ -316,6 +331,7 @@ public class Simulation implements Runnable {
                    simulationOutput.setReasonsOfEnding("the terminate condition by seconds" +
                            " was invoked");
                    endSimulation = true;
+                   simulationDTO.setEndSimualtion(endSimulation);
                    return;
                }
            }

@@ -1,4 +1,4 @@
-package servlets.adminServlet;
+package servlets.adminServlet.requests;
 
 import dto.RequestDetailsDTO;
 import jakarta.servlet.ServletException;

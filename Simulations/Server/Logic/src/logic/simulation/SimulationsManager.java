@@ -16,6 +16,7 @@ public class SimulationsManager {
     private List<Simulation> simulationList;
     private ExecutorService threadPool;
     private DTOCreator dtoCreator;
+    private Simulation currentRunningSimulation;
     public void createThreadPool(int numberOfThread){
         threadPool = Executors.newFixedThreadPool(numberOfThread);
     }
@@ -52,10 +53,14 @@ public class SimulationsManager {
 
         Simulation simulation = new Simulation(worldInstance,worldDefinition);
         simulation.setSimulationHistory(simulationHistory);
+        currentRunningSimulation = simulation;
         this.addSimulation(simulation);
         threadPool.execute(simulation);
-        SimulationDTO simulationDTO1 = dtoCreator.createSimulationDTO(worldDefinition,simulation, simulation.getSimulationOutput());
-        return simulationDTO1;
+        return simulation.getSimulationDTO();
+    }
+
+    public SimulationDTO getCurrentRunningSimulationDTO(){
+        return currentRunningSimulation.getSimulationDTO();
     }
     public void pauseSimulation(int id){
         for(Simulation simulation : simulationList){

@@ -5,7 +5,7 @@
          version="4.0">
     <servlet>
         <servlet-name>MainServlet</servlet-name>
-        <servlet-class>servlets.user.LoginServlet</servlet-class>
+        <servlet-class>servlets.user.login.LoginServlet</servlet-class>
     </servlet>
 
     <!-- Servlet Mapping -->

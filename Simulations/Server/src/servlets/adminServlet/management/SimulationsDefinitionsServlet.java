@@ -1,4 +1,4 @@
-package servlets.adminServlet;
+package servlets.adminServlet.management;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;

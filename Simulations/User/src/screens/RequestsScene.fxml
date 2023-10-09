@@ -46,7 +46,7 @@
                   </GridPane>
                </top>
                <bottom>
-                  <TableView fx:id="requestTable" prefHeight="265.0" prefWidth="792.0" BorderPane.alignment="CENTER">
+                  <TableView fx:id="requestTable" onMouseClicked="#runSimulation" prefHeight="265.0" prefWidth="792.0" BorderPane.alignment="CENTER">
                     <columns>
                       <TableColumn fx:id="requestNumberCol" prefWidth="125.99998986721039" text="Request's Number" >
                         <cellValueFactory>

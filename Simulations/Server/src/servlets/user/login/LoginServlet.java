@@ -1,4 +1,4 @@
-package servlets.user;
+package servlets.user.login;
 
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;

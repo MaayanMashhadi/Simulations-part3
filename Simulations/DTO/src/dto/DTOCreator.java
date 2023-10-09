@@ -379,9 +379,11 @@ public class DTOCreator {
         if(simulationOutput != null){
              simulationOutputDTO = new SimulationOutputDTO(simulation.getId(),simulationOutput.getReasonsOfEnding());
         }
-
-        return new SimulationDTO(simulation.getId(),simulation.getDate(), simulationOutputDTO,
+        SimulationDTO simulationDTO = new SimulationDTO(simulation.getId(),simulation.getDate(), simulationOutputDTO,
                 worldDefinitionDTO);
+        //simulationDTO.setCurrentDetailsDTO(simulation.getCurrentDetailsDTO());
+
+        return simulationDTO;
     }
 
     public HistogramSimulationDTO createHistogramForSimulation(HistogramSimulationManger histogramSimulationManger){

@@ -41,7 +41,7 @@ public class AllocationController {
     @FXML
     private void approveOrCancel(){
         RequestDetailsDTO selectedDTO = (RequestDetailsDTO) requestTable.getSelectionModel().getSelectedItem();
-        if (selectedDTO != null) {
+        if (selectedDTO != null && selectedDTO.getRequestStatus().equals("pending")) {
             Dialog<Void> dialog = new Dialog<>();
             dialog.setTitle("Select an Option");
             dialog.setHeaderText("Choose an option for: " + selectedDTO.getSimulationName());

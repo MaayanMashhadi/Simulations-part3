@@ -9,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,12 +29,6 @@ public class RequestsController {
     @FXML private RadioButton byTicksRadioChoice;
     @FXML private Label radioChoiceLabel;
     @FXML private TableView requestTable;
-//    private TableColumn<RequestDetailsDTO, Integer> reqNumCol;
-//    private TableColumn<RequestDetailsDTO, String> simNameCol;
-//    private TableColumn<RequestDetailsDTO, Integer> amountOfRunningCol;
-//    private TableColumn<RequestDetailsDTO, String> approvedCol;
-//    private TableColumn<RequestDetailsDTO, Integer> stillRunningCol;
-//    private TableColumn<RequestDetailsDTO, Integer> endingCol;
     private ObservableList<RequestDetailsDTO> dataListTable;
     private Integer choiceOfTicks = null;
     private Integer choiceOfSeconds = null;
@@ -42,8 +37,7 @@ public class RequestsController {
     private boolean isNotNull = false;
 
     public void initialize(){
-//        reqNumCol = new TableColumn<>("Request's Number");
-//        reqNumCol.setCellValueFactory(new PropertyValueFactory<>("entityName"));
+        requestTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         ToggleGroup toggleGroup = new ToggleGroup();
         byUserRadioChoice.setToggleGroup(toggleGroup);
         byTicksRadioChoice.setToggleGroup(toggleGroup);
@@ -53,6 +47,65 @@ public class RequestsController {
         updateRequestsTable.scheduleAtFixedRate(() -> {
             requestAllRequests();
         }, 0, 1, TimeUnit.SECONDS);
+    }
+
+    @FXML public void runSimulation(){
+        RequestDetailsDTO selectedDTO = (RequestDetailsDTO) requestTable.getSelectionModel().getSelectedItem();
+        if (selectedDTO != null && selectedDTO.getRequestStatus().equals("approve")) {
+            Dialog<Void> dialog = new Dialog<>();
+            dialog.setTitle("Run simulation");
+            dialog.setHeaderText("Run one simualtion of " + selectedDTO.getSimulationName());
+            Button buttonRun = new Button("Run");
+            VBox content = new VBox(10);
+            content.getChildren().addAll(buttonRun);
+            dialog.getDialogPane().setContent(content);
+            buttonRun.setOnAction(event -> {
+                String selectedOption = "run";
+                proceesRequest(selectedOption, selectedDTO);
+                dialog.close(); // Close the dialog after processing
+            });
+            dialog.showAndWait();
+
+        }
+    }
+
+    private void proceesRequest(String option, RequestDetailsDTO selectedRequest){
+        String RESOURCE = "/Server_Web_exploded/choose-running-simulation";
+        RequestBody formBody = new FormBody.Builder()
+                .add("option", option)
+                .add("requestID",String.valueOf(selectedRequest.getRequestNumber()))
+                .build();
+
+        Request request = new Request.Builder()
+                .url(BASE_URL + RESOURCE)
+                .post(formBody)
+                .build();
+        Call call = HTTP_CLIENT.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                // Handle failure here
+                e.printStackTrace();
+            }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(response.isSuccessful()){
+                    Platform.runLater(() -> {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Status update response");
+                        alert.setHeaderText(null);
+                        try {
+                            alert.setContentText(response.body().string());
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                        alert.showAndWait();
+                    });
+                }
+
+            }
+        });
+
     }
 
     private void requestAllRequests(){

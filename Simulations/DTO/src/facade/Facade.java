@@ -143,10 +143,16 @@ public class Facade {
     }
 
     public SimulationManagerDTO getSimulationManagerDTO() {
+        /**this is will be not null - just after start simulation! it there isn't simulation
+         * it will be null
+         */
         if(simulationsManager.getSimulationList()!=null){
             simulationManagerDTO = dtoCreator.createManagerSimulationDTO(simulationsManager);
         }
         return simulationManagerDTO;
+    }
+    public SimulationDTO getCurrentRunningSimulationDTO(){
+        return simulationsManager.getCurrentRunningSimulationDTO();
     }
 
     public PropertyInstanceDTO createPropertyInstance(PropertyDefinitionDTO propertyDefinition,

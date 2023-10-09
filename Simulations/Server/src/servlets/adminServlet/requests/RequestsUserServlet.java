@@ -1,4 +1,4 @@
-package servlets.user;
+package servlets.adminServlet.requests;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -12,19 +12,15 @@ import utils.user.RequestsManager;
 
 import java.io.IOException;
 
-@WebServlet("/all-requests")
-public class AllRequestsServlet extends HttpServlet {
+@WebServlet("/requests-users")
+public class RequestsUserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String username = SessionUtils.getUsername(req);
-        if (username == null) {
-            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        }
-        else{
+
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            String jsonOutput = gson.toJson(((RequestsManager) getServletContext().getAttribute("requestDetailsManager")).getAllRequestsByUser(username));
+            String jsonOutput = gson.toJson(((RequestsManager) getServletContext().getAttribute("requestDetailsManager")).getRequestsPerUser());
             resp.setContentType("application/json");
             resp.getWriter().write(jsonOutput);
-        }
+
     }
 }

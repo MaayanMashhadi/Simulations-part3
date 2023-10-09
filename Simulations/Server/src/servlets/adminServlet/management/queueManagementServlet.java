@@ -1,4 +1,4 @@
-package servlets.adminServlet;
+package servlets.adminServlet.management;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

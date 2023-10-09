@@ -1,4 +1,4 @@
-package servlets.adminServlet;
+package servlets.adminServlet.management;
 
 import facade.Facade;
 import jakarta.servlet.ServletException;

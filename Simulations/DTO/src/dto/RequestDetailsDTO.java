@@ -16,6 +16,10 @@ public class RequestDetailsDTO {
         this.requestStatus = requestStatus;
     }
 
+    public void setAmountOfRunning(int amountOfRunning) {
+        this.amountOfRunning = amountOfRunning;
+    }
+
     public RequestDetailsDTO(String userName, int requestNumber, String simulationName, int amountOfRunning,
                              String requestStatus, int amountOfSimulationsRuunning, int amountOfSimulationEnding, List<TerminateConditionDTO> terminateConditions) {
         this.requestNumber = requestNumber;
