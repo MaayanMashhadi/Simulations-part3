@@ -4,12 +4,13 @@ import logic.definition.entity.api.EntityDefinition;
 
 import java.util.List;
 
-public class SimulationHistory {
+public class SimulationHistoryDTO {
     private List<PropertyInstanceDTO> propertyInstanceDTOS;
-    private List<EntityDefinition> entityDefinitionsDTOS;
+    private List<EntityDefinitionDTO> entityDefinitionsDTOS;
     private ActiveEnvironmentDTO activeEnvironmentDTO;
 
-    public SimulationHistory(ActiveEnvironmentDTO activeEnvironmentDTO, List<PropertyInstanceDTO> propertyInstanceDTOS, List<EntityDefinition> entityDefinitionsDTOS) {
+    public SimulationHistoryDTO(ActiveEnvironmentDTO activeEnvironmentDTO,
+                                List<PropertyInstanceDTO> propertyInstanceDTOS, List<EntityDefinitionDTO> entityDefinitionsDTOS) {
         this.propertyInstanceDTOS = propertyInstanceDTOS;
         this.entityDefinitionsDTOS = entityDefinitionsDTOS;
         this.activeEnvironmentDTO = activeEnvironmentDTO;
@@ -23,7 +24,7 @@ public class SimulationHistory {
         return propertyInstanceDTOS;
     }
 
-    public List<EntityDefinition> getEntityDefinitionsDTOS() {
+    public List<EntityDefinitionDTO> getEntityDefinitionsDTOS() {
         return entityDefinitionsDTOS;
     }
 }

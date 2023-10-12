@@ -14,7 +14,6 @@ import logic.terminateCondition.TerminateByTicks;
 import logic.terminateCondition.TerminateCondition;
 import logic.world.WorldDefinition;
 import logic.world.WorldInstance;
-import dto.*;
 
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
@@ -37,16 +36,16 @@ public class Simulation implements Runnable {
     private Thread simulationThread;
     private  Map<Integer, List<Integer>> amountOfEntitiesByTicks = new HashMap<>();
     private int ticks = 0;
-    private SimulationHistory simulationHistory;
+    private SimulationHistoryDTO simulationHistory;
     private boolean isRunning = false;
     private Object pauseLock = new Object();
     private DTOCreator dtoCreator = new DTOCreator();
 
-    public void setSimulationHistory(SimulationHistory simulationHistory) {
+    public void setSimulationHistory(SimulationHistoryDTO simulationHistory) {
         this.simulationHistory = simulationHistory;
     }
 
-    public SimulationHistory getSimulationHistory() {
+    public SimulationHistoryDTO getSimulationHistory() {
         return simulationHistory;
     }
 

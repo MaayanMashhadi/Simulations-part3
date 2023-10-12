@@ -2,6 +2,7 @@ package controllers;
 
 import com.google.gson.Gson;
 import dto.RequestDetailsDTO;
+import dto.WorldDefinitionDTO;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,6 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +37,11 @@ public class RequestsController {
     private Integer choiceOfUser = null;
     private RequestDetailsDTO[] requestsArray;
     private boolean isNotNull = false;
+    private MainController mainController;
+
+    public void setMainController(MainController mainController) {
+        this.mainController = mainController;
+    }
 
     public void initialize(){
         requestTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
@@ -52,21 +59,35 @@ public class RequestsController {
     @FXML public void runSimulation(){
         RequestDetailsDTO selectedDTO = (RequestDetailsDTO) requestTable.getSelectionModel().getSelectedItem();
         if (selectedDTO != null && selectedDTO.getRequestStatus().equals("approve")) {
-            Dialog<Void> dialog = new Dialog<>();
-            dialog.setTitle("Run simulation");
-            dialog.setHeaderText("Run one simualtion of " + selectedDTO.getSimulationName());
-            Button buttonRun = new Button("Run");
-            VBox content = new VBox(10);
-            content.getChildren().addAll(buttonRun);
-            dialog.getDialogPane().setContent(content);
-            buttonRun.setOnAction(event -> {
-                String selectedOption = "run";
-                proceesRequest(selectedOption, selectedDTO);
-                dialog.close(); // Close the dialog after processing
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Enter Value");
+            dialog.setHeaderText("Please write run if you want to run the simulation");
+            dialog.setContentText("Value:");
+
+            dialog.showAndWait().ifPresent(userChoice -> {
+                if(userChoice.equals("run") || userChoice.equals("Run") || userChoice.equals("RUN")){
+                    String selectedOption = "run";
+                    proceesRequest(selectedOption, selectedDTO);
+                    Platform.runLater(() -> {
+                        try {
+                            mainController.loadExecutionScene();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+                }
+                else{
+                    Platform.runLater(() -> {
+                        dialog.close();
+                    });
+                }
+
             });
-            dialog.showAndWait();
 
         }
+    }
+    private void loadExecutionScene() throws IOException {
+        mainController.loadExecutionScene();
     }
 
     private void proceesRequest(String option, RequestDetailsDTO selectedRequest){
@@ -280,64 +301,86 @@ public class RequestsController {
             alert.showAndWait();
         }
     }
+    private boolean checkForNameSimulation(String simulationName){
+        boolean isFound = false;
+        for(WorldDefinitionDTO worldDefinitionDTO : mainController.getSimulationsArray()){
+            if(worldDefinitionDTO.getName().equals(simulationName)){
+                mainController.setWorldDefinitionDTO(worldDefinitionDTO);
+                isFound = true;
+                break;
+            }
+        }
+        if(!isFound){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText(null);
+            alert.setContentText("The simulation you entered does not exist");
+            alert.showAndWait();
+        }
+        return isFound;
+    }
 
     private void requestsRequest(){
-        String RESOURCE = "/Server_Web_exploded/request-process-user-servlet";
         String simulationName = simulationNameTextfied.getText();
-        String amountOfRunning = amountRunningTextField.getText();
-        RequestBody requestBody = new FormBody.Builder()
-                .add("simulationName", simulationName)
-                .add("amountOfRunning", amountOfRunning)
-                .add("byUser", String.valueOf(choiceOfUser))
-                .add("byTicks", String.valueOf(choiceOfTicks))
-                .add("bySeconds", String.valueOf(choiceOfSeconds))
-                .build();
+        boolean isGood = checkForNameSimulation(simulationName);
+        if(isGood){
+            String RESOURCE = "/Server_Web_exploded/request-process-user-servlet";
+            String amountOfRunning = amountRunningTextField.getText();
+            RequestBody requestBody = new FormBody.Builder()
+                    .add("simulationName", simulationName)
+                    .add("amountOfRunning", amountOfRunning)
+                    .add("byUser", String.valueOf(choiceOfUser))
+                    .add("byTicks", String.valueOf(choiceOfTicks))
+                    .add("bySeconds", String.valueOf(choiceOfSeconds))
+                    .build();
 
-        Request request = new Request.Builder()
-                .url(BASE_URL + RESOURCE)
-                .post(requestBody)
-                .build();
-        Call call = HTTP_CLIENT.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
+            Request request = new Request.Builder()
+                    .url(BASE_URL + RESOURCE)
+                    .post(requestBody)
+                    .build();
+            Call call = HTTP_CLIENT.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    e.printStackTrace();
 
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if(response.isSuccessful()){
-                    String jsonResponse = response.body().string();
-                    Gson gson = new Gson();
-                    requestsArray = gson.fromJson(jsonResponse, RequestDetailsDTO[].class);
-                    for(RequestDetailsDTO requestDetailsDTO : requestsArray){
-                        boolean isFound = false;
-                        for(RequestDetailsDTO existingData : dataListTable){
-                            if(requestDetailsDTO.getRequestNumber() == existingData.getRequestNumber()){
-                                //TODO : need to add the still running and ending
-                                isFound = true;
-                                break;
-                            }
-                        }
-                        if(!isFound){
-                            dataListTable.add(new RequestDetailsDTO(requestDetailsDTO.getRequestNumber(),
-                                    requestDetailsDTO.getSimulationName(), requestDetailsDTO.getAmountOfRunning(),
-                                    requestDetailsDTO.getRequestStatus(), requestDetailsDTO.getAmountOfSimulationsRuunning(),
-                                    requestDetailsDTO.getAmountOfSimulationEnding(), requestDetailsDTO.getTerminateConditions()));
-                        }
-                    }
-                    Platform.runLater(() ->{
-
-
-                        requestTable.setItems(dataListTable);
-
-
-                    });
                 }
 
-            }
-        });
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if(response.isSuccessful()){
+                        String jsonResponse = response.body().string();
+                        Gson gson = new Gson();
+                        requestsArray = gson.fromJson(jsonResponse, RequestDetailsDTO[].class);
+                        for(RequestDetailsDTO requestDetailsDTO : requestsArray){
+                            boolean isFound = false;
+                            for(RequestDetailsDTO existingData : dataListTable){
+                                if(requestDetailsDTO.getRequestNumber() == existingData.getRequestNumber()){
+                                    //TODO : need to add the still running and ending
+                                    isFound = true;
+                                    break;
+                                }
+                            }
+                            if(!isFound){
+                                dataListTable.add(new RequestDetailsDTO(requestDetailsDTO.getRequestNumber(),
+                                        requestDetailsDTO.getSimulationName(), requestDetailsDTO.getAmountOfRunning(),
+                                        requestDetailsDTO.getRequestStatus(), requestDetailsDTO.getAmountOfSimulationsRuunning(),
+                                        requestDetailsDTO.getAmountOfSimulationEnding(), requestDetailsDTO.getTerminateConditions()));
+                            }
+                        }
+                        Platform.runLater(() ->{
+
+
+                            requestTable.setItems(dataListTable);
+
+
+                        });
+                    }
+
+                }
+            });
+        }
+
 
     }
 

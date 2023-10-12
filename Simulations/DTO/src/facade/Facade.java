@@ -2,8 +2,13 @@ package facade;
 
 import com.*;
 import logic.definition.entity.api.EntityDefinition;
+import logic.definition.entity.impl.EntityDefinitionImpl;
 import logic.definition.property.api.PropertyDefinition;
 import dto.*;
+import logic.definition.property.impl.BooleanPropertyDefinition;
+import logic.definition.property.impl.FloatPropertyDefinition;
+import logic.definition.property.impl.StringPropertyDefinition;
+import logic.definition.value.random.AbstractRandomValueGenerator;
 import logic.execution.instance.environment.api.ActiveEnvironment;
 import logic.execution.instance.environment.impl.ActiveEnvironmentImpl;
 import logic.execution.instance.property.api.PropertyInstance;
@@ -29,7 +34,7 @@ public class Facade {
     private DTOCreator dtoCreator;
     private ExecutorService threadPool;
     private int numberOfThread;
-    private SimulationHistory simulationHistory;
+    private SimulationHistoryDTO simulationHistory;
     private String file;
     private QueueManagmentDTO queueManagmentDTO;
 
@@ -71,6 +76,48 @@ public class Facade {
         //threadPool = Executors.newFixedThreadPool(numberOfThread);
         simulationsManager.createThreadPool(numberOfThread);
     }
+    public void createHistory(ActiveEnvironmentDTO activeEnvironmentDTO,
+                              List<PropertyInstanceDTO> propertyInstances, WorldDefinitionDTO worldDefinitionDTO){
+        //TODO : instead here - do the createHistroy in the server (engine)
+        List<EntityDefinitionDTO> population = new ArrayList<>();
+        EntityDefinitionDTO newEntityDefinition;
+        PropertyDefinitionDTO newPropertyDefinition = null;
+        for(EntityDefinition entityDefinition : worldDefinition.getPopulation()){
+            for(EntityDefinitionDTO entityDefinitionDTO : worldDefinitionDTO.getEntityDefinitionDTOS()){
+                if(entityDefinitionDTO.getName().equals(entityDefinition.getName())){
+                    entityDefinition.setStartPopulation(entityDefinitionDTO.getStartPopulation());
+                    entityDefinition.setEndPopulation(entityDefinitionDTO.getEndPopulation());
+                    break;
+                }
+
+            }
+            newEntityDefinition = new EntityDefinitionDTO(entityDefinition.getName(),entityDefinition.getStartPopulation(), entityDefinition.getEndPopulation());
+            for(PropertyDefinition propertyDefinition : entityDefinition.getProps()){
+                if(propertyDefinition instanceof BooleanPropertyDefinition){
+                        newPropertyDefinition = dtoCreator.createPropertyDefinitionDTO(propertyDefinition.getName(),
+                                propertyDefinition.getType().name(),
+                                null, null,"fixed", propertyDefinition.generateValue());
+
+                }
+                else if(propertyDefinition instanceof StringPropertyDefinition){
+                        newPropertyDefinition =dtoCreator.createPropertyDefinitionDTO(propertyDefinition.getName(),
+                                propertyDefinition.getType().name(),
+                                null, null,"fixed", propertyDefinition.generateValue());
+
+                }
+                else if(propertyDefinition instanceof FloatPropertyDefinition){
+                    newPropertyDefinition = dtoCreator.createPropertyDefinitionDTO(propertyDefinition.getName(),
+                            propertyDefinition.getType().name(), String.valueOf(((FloatPropertyDefinition)propertyDefinition).getFrom()),
+                            String.valueOf(((FloatPropertyDefinition)propertyDefinition).getTo()),"fixed", propertyDefinition.generateValue());
+                }
+
+                newEntityDefinition.addProperty(newPropertyDefinition);
+            }
+            population.add(newEntityDefinition);
+        }
+        //TODO : will get from the server
+        simulationHistory = new SimulationHistoryDTO(activeEnvironmentDTO,propertyInstances, population);
+    }
 
     public ActiveEnvironment createEnvVarible(ActiveEnvironmentDTO activeEnvironmentDTO){
         ActiveEnvironment activeEnvironment = new ActiveEnvironmentImpl();
@@ -92,10 +139,10 @@ public class Facade {
     }
 
     public SimulationDTO startSimulationInHistory(ActiveEnvironmentDTO activeEnvironmentDTO,
-                                                  List<EntityDefinition> population) throws JAXBException {
+                                                  List<EntityDefinitionDTO> population) throws JAXBException {
         //worldDefinition = generator.fromXmlFileToObject(file);
         ActiveEnvironment activeEnvironment = createEnvVarible(activeEnvironmentDTO);
-        for(EntityDefinition entityDefinition : population){
+        for(EntityDefinitionDTO entityDefinition : population){
             for(EntityDefinition entityDefinition1 : worldDefinition.getPopulation()){
                 if(entityDefinition.getName().equals(entityDefinition1.getName())){
                     entityDefinition1.setStartPopulation(entityDefinition.getStartPopulation());
@@ -122,12 +169,12 @@ public class Facade {
                simulationHistory);
        return simulationDTO;
     }
-    public void setSimulationHistory(SimulationHistory simulationHistory) {
+    public void setSimulationHistory(SimulationHistoryDTO simulationHistory) {
         this.simulationHistory = simulationHistory;
 
     }
 
-    public SimulationHistory getSimulationHistory(int id) {
+    public SimulationHistoryDTO getSimulationHistory(int id) {
         return simulationsManager.getSimulationById(id).getSimulationHistory();
     }
 

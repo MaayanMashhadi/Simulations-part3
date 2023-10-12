@@ -47,7 +47,7 @@ public class SimulationsManager {
     }
 
     public SimulationDTO startSimulation(ActiveEnvironment activeEnvironment, WorldDefinition worldDefinition,
-                                         SimulationHistory simulationHistory){
+                                         SimulationHistoryDTO simulationHistory){
        WorldInstance worldInstance = new WorldInstance(worldDefinition, activeEnvironment,
                simulationHistory);
 

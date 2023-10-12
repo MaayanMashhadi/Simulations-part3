@@ -31,7 +31,12 @@ public class SimulationsDetailsController {
     @FXML private VBox vboxForRightTree;
     private ObservableList<TreeView<String>> treeViews;
     private WorldDefinitionDTO[] simulationsArray;
+    private MainController mainController;
     private boolean isNotNull = false;
+
+    public void setMainController(MainController mainController) {
+        this.mainController = mainController;
+    }
 
     public void initialize(){
         treeViews = FXCollections.observableArrayList();
@@ -65,6 +70,7 @@ public class SimulationsDetailsController {
                                  String jsonResponse = response.body().string();
                                  Gson gson = new Gson();
                                  simulationsArray = gson.fromJson(jsonResponse, WorldDefinitionDTO[].class);
+
 //                                 if (simulationsArray != null) {
 //                                     for (WorldDefinitionDTO definition : simulationsArray) {
 //                                         TreeView<String> treeView = createTreeView(definition);

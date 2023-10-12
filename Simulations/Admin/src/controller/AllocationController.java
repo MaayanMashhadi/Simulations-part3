@@ -73,7 +73,7 @@ public class AllocationController {
     }
 
     private void proceesRequest(String option, RequestDetailsDTO selectedRequest){
-        String RESOURCE = "/Server_Web_exploded/approve-or-deny";
+        String RESOURCE = "/Server_Web_exploded/approved-or-deny";
         RequestBody formBody = new FormBody.Builder()
                 .add("option", option)
                 .add("requestID",String.valueOf(selectedRequest.getRequestNumber()))

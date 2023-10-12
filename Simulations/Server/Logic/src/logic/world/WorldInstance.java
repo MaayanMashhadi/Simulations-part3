@@ -29,7 +29,7 @@ public class WorldInstance{
     private EntityInstanceManager entityInstanceManagerCreating;
     private int ticks;
     private int seconds;
-    private SimulationHistory simulationHistory;
+    private SimulationHistoryDTO simulationHistory;
 
     private List<TerminateCondition> terminateConditions;
     private Matrix grid;
@@ -41,7 +41,7 @@ public class WorldInstance{
 
 
     public WorldInstance(WorldDefinition worldDefinition, ActiveEnvironment environmentVariablesManager,
-                         SimulationHistory simulationHistory){
+                         SimulationHistoryDTO simulationHistory){
         this.worldDefinition = worldDefinition;
         terminateConditions = new ArrayList<>();
         this.environmentVariablesManager = environmentVariablesManager;
