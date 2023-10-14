@@ -8,12 +8,12 @@
     <content>
         <BorderPane prefHeight="565.0" prefWidth="833.0">
             <left>
-                <ListView fx:id="executionListView" onMouseClicked="#showHistogram" prefHeight="208.0" prefWidth="347.0" BorderPane.alignment="CENTER" />
+                <ListView fx:id="executionListView" onMouseClicked="#showHistogram" prefHeight="355.0" prefWidth="367.0" BorderPane.alignment="CENTER" />
             </left>
             <bottom>
                 <FlowPane fx:id="executionResult" prefHeight="210.0" prefWidth="761.0" BorderPane.alignment="BOTTOM_RIGHT">
                     <children>
-                        <TreeView fx:id="treeOfHistogram" prefHeight="210.0" prefWidth="431.0" />
+                        <TreeView fx:id="treeOfHistogram" prefHeight="210.0" prefWidth="416.0" />
                         <LineChart fx:id="graphOfEntities" prefHeight="210.0" prefWidth="358.0">
                             <xAxis>
                                 <NumberAxis side="BOTTOM" />

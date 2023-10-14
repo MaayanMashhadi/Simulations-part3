@@ -193,6 +193,7 @@ public class Simulation implements Runnable {
             simulationEndedLatch.countDown();
 
         }
+        simulationDTO = dtoCreator.createSimulationDTO(worldDefinition, this, simulationOutput);
     }
 
     public SimulationDTO getSimulationDTO() {

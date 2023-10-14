@@ -168,8 +168,7 @@ public class ExecutionController {
 
         }
         else{
-            requestForSimluationHistory();
-            for(EntityDefinitionDTO entityDefinition : simulationHistoryDTO.getEntityDefinitionsDTOS()){
+            for(EntityDefinitionDTO entityDefinition : requestForSimluationHistory().getEntityDefinitionsDTOS()){
                 GridPane gridPane = new GridPane();
                 gridPane.setVgap(10);
                 Label labelEntity = new Label(entityDefinition.getName()+":\n");
@@ -385,8 +384,7 @@ public class ExecutionController {
         else{
             i = 1;
             //TODO : requests for the server to do it (304)
-            requestForSimluationHistory();
-            for(PropertyInstanceDTO envVariable : simulationHistoryDTO.getPropertyInstanceDTOS()){
+            for(PropertyInstanceDTO envVariable : requestForSimluationHistory().getPropertyInstanceDTOS()){
                 String from = null;
                 String to = null;
                 if (envVariable.getPropertyDefinition().getFrom() != null) {
@@ -428,25 +426,20 @@ public class ExecutionController {
                 .post(formBody)
                 .build();
         Call call = HTTP_CLIENT.newCall(request);
-        final PropertyInstanceDTO[] result = {null};
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                // Handle failure here
-                e.printStackTrace();
+        PropertyInstanceDTO result = null;
+        try(Response response = call.execute()){
+            if(response.isSuccessful()){
+                result = gson.fromJson(response.body().string(), PropertyInstanceDTO.class);
             }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if(response.isSuccessful()){
-                    result[0] = gson.fromJson(response.body().string(), PropertyInstanceDTO.class);
-                }
-            }
-        });
-        return result[0];
     }
-    private void requestForSimluationHistory() {
-        String RESOURCE = "/Server_Web_exploded/start-simulation-history";
+    private SimulationHistoryDTO requestForSimluationHistory() {
+        String RESOURCE = "/Server_Web_exploded/create-history";
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String simulationHistoryID = gson.toJson(simulationForHistory.getId());
         HttpUrl.Builder urlBuilder = HttpUrl.parse(BASE_URL + RESOURCE)
@@ -457,21 +450,17 @@ public class ExecutionController {
                 .get()
                 .build();
         Call call = HTTP_CLIENT.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                // Handle failure here
-                e.printStackTrace();
+        SimulationHistoryDTO simulationHistoryDTO = null;
+        try(Response response = call.execute()) {
+            if (response.isSuccessful()) {
+                simulationHistoryDTO = gson.fromJson(response.body().string(), SimulationHistoryDTO.class);
             }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                    simulationHistoryDTO = gson.fromJson(response.body().string(), SimulationHistoryDTO.class);
-                }
-            }
-        });
+            response.close();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        return simulationHistoryDTO;
     }
 
     private Object processUserChoiceForEnv(PropertyDefinitionDTO chosenEnvVariable,String userInput) {

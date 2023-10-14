@@ -21,7 +21,8 @@ public class SimulationHistoryDTO {
     }
 
     public List<PropertyInstanceDTO> getPropertyInstanceDTOS() {
-        return propertyInstanceDTOS;
+
+        return activeEnvironmentDTO.getPropertyInstanceDTOS();
     }
 
     public List<EntityDefinitionDTO> getEntityDefinitionsDTOS() {

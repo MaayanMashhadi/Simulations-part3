@@ -26,6 +26,7 @@ import logic.world.WorldDefinition;
 import logic.rule.action.api.ActionType;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DTOCreator {
 
@@ -387,7 +388,7 @@ public class DTOCreator {
     }
 
     public HistogramSimulationDTO createHistogramForSimulation(HistogramSimulationManger histogramSimulationManger){
-        Map<Object, Integer> histogram= new HashMap<>();
+        Map<Object, Integer> histogram= new ConcurrentHashMap<>();
         histogram.putAll(histogramSimulationManger.getHistogram());
         return new HistogramSimulationDTO(histogram,histogramSimulationManger.getConsistency());
     }

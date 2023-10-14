@@ -32,11 +32,11 @@ public class SimulationCurrentDetailsDTO {
     }
 
     public Map<Integer, List<Integer>> getAmoutOfEntitiesByTicks() {
-        if(amoutOfEntitiesByTicks.size() <= 1000){
+        if(amoutOfEntitiesByTicks.size() <= 100){
             return amoutOfEntitiesByTicks;
         }
         else{
-            int target = 1000;
+            int target = 100;
             int step = amoutOfEntitiesByTicks.size() / target;
             return amoutOfEntitiesByTicks.entrySet().stream()
                     .filter(entry -> entry.getKey() % step == 0)

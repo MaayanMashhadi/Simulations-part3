@@ -55,8 +55,8 @@
                                             <children>
                                                 <Button fx:id="requestsButton" mnemonicParsing="false" onAction="#setOnActionRequestsButton" text="Requests" GridPane.columnIndex="4" GridPane.rowIndex="1" />
                                                 <Button fx:id="simulationsDeatilsButton" mnemonicParsing="false" onAction="#setSimulationsDeatilsButtonOnAction" prefHeight="25.0" prefWidth="120.0" text="Simulations Details" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                                                <Button fx:id="executionButton" mnemonicParsing="false" text="Execution" GridPane.columnIndex="5" GridPane.rowIndex="1" />
-                                    <Button fx:id="resultsButton" mnemonicParsing="false" text="Results" GridPane.columnIndex="6" GridPane.rowIndex="1" />
+                                                <Button fx:id="executionButton" mnemonicParsing="false" onAction="#loadExecutionScene" text="Execution" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+                                    <Button fx:id="resultsButton" mnemonicParsing="false" onAction="#loadResultScene" text="Results" GridPane.columnIndex="6" GridPane.rowIndex="1" />
                                             </children>
                                         </GridPane>
                                     </center>

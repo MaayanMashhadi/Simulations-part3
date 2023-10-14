@@ -3,6 +3,7 @@ package servlets.user.execution;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.PropertyDefinitionDTO;
+import dto.PropertyInstanceDTO;
 import facade.Facade;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -21,7 +22,8 @@ public class CreatePropertyInstnceDTOServlet extends HttpServlet {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         PropertyDefinitionDTO propertyDefinitionDTO = gson.fromJson(propertyDefinition, PropertyDefinitionDTO.class);
         Object valueDTO = gson.fromJson(value, Object.class);
-        String jsonOutput = gson.toJson(((Facade) getServletContext().getAttribute("facade")).createPropertyInstance(propertyDefinitionDTO, valueDTO));
+        PropertyInstanceDTO propertyInstanceDTO = ((Facade) getServletContext().getAttribute("facade")).createPropertyInstance(propertyDefinitionDTO, valueDTO);
+        String jsonOutput = gson.toJson(propertyInstanceDTO);
         resp.setContentType("application/json");
         resp.getWriter().write(jsonOutput);
     }

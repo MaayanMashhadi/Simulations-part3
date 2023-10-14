@@ -1,6 +1,7 @@
 package controller;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import dto.*;
 import facade.Facade;
 import javafx.application.Platform;
@@ -16,9 +17,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import logic.definition.entity.api.EntityDefinition;
 import logic.simulation.Simulation;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Request;
+import okhttp3.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -292,7 +291,7 @@ public class ResultAdminController {
 
 
     private void loadSimulationList(){
-        Simulation findSimulation = null;
+        SimulationDTO findSimulation = null;
         Thread labelOfRunStop;
         for(SimulationDTO simulationDTO : simulationManagerDTO.getSimulationList()){
             labelOfRunStop = new Thread(() -> {
@@ -351,6 +350,7 @@ public class ResultAdminController {
         if (selectedItem != null) {
             String[] split = selectedItem.split(" ");
             int id = Integer.parseInt(split[2]);
+            requestSimulationManager();
             SimulationDTO simulationForDetails = simulationManagerDTO.getSimulationList().stream().filter(simulation -> id == simulation.getId()).findFirst().orElse(null);
 
             numberOfTick.setText(
@@ -375,6 +375,7 @@ public class ResultAdminController {
             String[] split = selectedItem.split(" ");
             int id = Integer.parseInt(split[2]);
             SimulationDTO simulationForDetails = null;
+            requestSimulationManager();
             for (SimulationDTO simulation : simulationManagerDTO.getSimulationList()) {
                 if (id == simulation.getId()) {
                     simulationForDetails = simulation;
@@ -397,6 +398,7 @@ public class ResultAdminController {
             String[] split = selectedItem.split(" ");
             int id = Integer.parseInt(split[2]);
             SimulationDTO chosenSimulation = null;
+            requestSimulationManager();
             for(SimulationDTO simulation : simulationManagerDTO.getSimulationList()){
                 if(simulation.getId() == id){
                     chosenSimulation = simulation;
@@ -431,14 +433,53 @@ public class ResultAdminController {
             numberOfEntity++;
         }
     }
+    private HistogramSimulationDTO requestForHistogram(Integer id, EntityDefinitionDTO chosenEntity, PropertyDefinitionDTO chosenProperty) {
+        String RESOURCE = "/Server_Web_exploded/create-histogram";
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String idJson = gson.toJson(id);
+        String propertyJson = gson.toJson(chosenProperty);
+        String entityJson = gson.toJson(chosenEntity);
+        RequestBody formBody = new FormBody.Builder()
+                .add("simulationID", idJson)
+                .add("property", propertyJson)
+                .add("entity", entityJson)
+                .build();
+        Request request = new Request.Builder()
+                .url(BASE_URL + RESOURCE)
+                .post(formBody)
+                .build();
+        Call call = HTTP_CLIENT.newCall(request);
+        final HistogramSimulationDTO[] histogramSimulationDTO = new HistogramSimulationDTO[1];
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    Platform.runLater(() -> {
+                        try {
+                            String result = response.body().string();
+                            histogramSimulationDTO[0] = gson.fromJson(result, HistogramSimulationDTO.class);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    });
+                }
+
+            }
+        });
+        return histogramSimulationDTO[0];
+    }
     @FXML
     private void showHistogramByProp(EntityDefinitionDTO chosenEntity, SimulationDTO simulation, int numberOfEntity){
         int numberOfProperty = 2;
         for (PropertyDefinitionDTO property : chosenEntity.getProperties()) {
             treeOfHistogram.getRoot().getChildren().get(numberOfEntity).getChildren().add(new TreeItem<>(property.getName())); //2
             //TODO: the server will do it by dto and no simulation - the server will build the Histogram DTO by sending him the dto simulation
-            HistogramSimulationDTO histogramSimulationDTO =facade.createHistogramForSimulation(simulation.buildHistogramForSimulation(chosenEntity.getName(),
-                    property.getName()));
+            HistogramSimulationDTO histogramSimulationDTO =requestForHistogram(simulation.getId(), chosenEntity, property);
             Map<Object, Integer> histogram = histogramSimulationDTO.getHistogram();
             if(!histogram.isEmpty()){
                 treeOfHistogram.getRoot().getChildren().get(numberOfEntity).getChildren().get(numberOfProperty).getChildren().add(new TreeItem<>("histogram: "));

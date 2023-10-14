@@ -76,6 +76,7 @@ public class Facade {
         //threadPool = Executors.newFixedThreadPool(numberOfThread);
         simulationsManager.createThreadPool(numberOfThread);
     }
+
     public void createHistory(ActiveEnvironmentDTO activeEnvironmentDTO,
                               List<PropertyInstanceDTO> propertyInstances, WorldDefinitionDTO worldDefinitionDTO){
         //TODO : instead here - do the createHistroy in the server (engine)

@@ -1,6 +1,7 @@
 package controllers;
 
 import com.google.gson.Gson;
+import dto.SimulationDTO;
 import dto.WorldDefinitionDTO;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -25,6 +26,11 @@ public class MainController {
     @FXML private HBox hboxScene;
     private WorldDefinitionDTO worldDefinitionDTO;
     private WorldDefinitionDTO[] simulationsArray;
+    private SimulationDTO simulationEnding;
+
+    public void setSimulationHistory(SimulationDTO simulationEnding) {
+        this.simulationEnding = simulationEnding;
+    }
 
     private void simulationsRequest(){
         String RESOURCE = "/Server_Web_exploded/simulations-definition";
@@ -122,6 +128,28 @@ public class MainController {
         }
     }
 
+    public void loadNewExecutionSceneFromResultScene() {
+        try {
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/screens/ExecutionScene.fxml"));
+                Parent newSceneRoot = fxmlLoader.load();
+                ExecutionController newExecutionController = fxmlLoader.getController();
+                newExecutionController.setSimulationForHistory(simulationEnding);
+                newExecutionController.setIsFromResultScene(true);
+                newExecutionController.setWorldDefinitionDTO(worldDefinitionDTO);
+                newExecutionController.setHboxScene(hboxScene);
+                newExecutionController.setMainController(this);
+
+
+                hboxScene.getChildren().clear();
+                hboxScene.getChildren().add(newSceneRoot);
+            }
+
+        catch (IOException e){
+            e.printStackTrace();
+        }
+
+    }
+
     public void setWorldDefinitionDTO(WorldDefinitionDTO worldDefinitionDTO) {
         //TODO : on the request - put the world definitoin of the name sinualtion
         this.worldDefinitionDTO = worldDefinitionDTO;
@@ -132,6 +160,7 @@ public class MainController {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/screens/ResultUserScene.fxml"));
             Parent newSceneRoot = fxmlLoader.load();
             ResultUserController executionController = fxmlLoader.getController();
+            executionController.setMainController(this);
             hboxScene.getChildren().clear();
             hboxScene.getChildren().add(newSceneRoot);
         }
@@ -139,4 +168,5 @@ public class MainController {
             e.printStackTrace();
         }
     }
+
 }

@@ -7,6 +7,7 @@ public class HistogramSimulationDTO {
     private int consistency;
     private Float average;
 
+
     public HistogramSimulationDTO(Map<Object, Integer> histogram, int consistency) {
         this.histogram = histogram;
         this.consistency = consistency;
@@ -33,5 +34,8 @@ public class HistogramSimulationDTO {
 
     public int getConsistency() {
         return consistency;
+    }
+    public void setAverage(Float average){
+        this.average = average;
     }
 }
