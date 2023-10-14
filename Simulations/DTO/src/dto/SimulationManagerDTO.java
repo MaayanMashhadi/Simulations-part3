@@ -7,6 +7,7 @@ public class SimulationManagerDTO {
 
     private final List<SimulationDTO> simulationList;
 
+
     public SimulationManagerDTO(List<SimulationDTO> simulationDTOList){
         simulationList = simulationDTOList;
     }

@@ -6,6 +6,7 @@ import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
 import utils.admin.SimulationsDefinitionsManager;
 import utils.user.RequestsManager;
+import utils.user.SimulationUserManager;
 
 @WebListener
 public class ContextInitialize implements ServletContextListener {
@@ -16,6 +17,7 @@ public class ContextInitialize implements ServletContextListener {
         servletContextEvent.getServletContext().setAttribute("facade",new Facade());
         servletContextEvent.getServletContext().setAttribute("requestDetailsManager", new RequestsManager());
         servletContextEvent.getServletContext().setAttribute("requestsCounter", 1);
+        servletContextEvent.getServletContext().setAttribute("simulationUserManager", new SimulationUserManager());
 
     }
 

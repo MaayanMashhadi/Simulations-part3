@@ -6,6 +6,7 @@ import java.util.Date;
 public class SimulationDTO {
     private final WorldDefinitionDTO worldDefinitionDTO;
     private boolean isWaitingSimulation;
+    private String userName;
 
     private final int id;
     private final  Date date;
@@ -13,6 +14,14 @@ public class SimulationDTO {
     private boolean endSimualtion;
     private boolean isRUnning = false;
     private SimulationCurrentDetailsDTO currentDetailsDTO;
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
     public void setCurrentDetailsDTO(SimulationCurrentDetailsDTO currentDetailsDTO) {
         this.currentDetailsDTO = currentDetailsDTO;
@@ -23,11 +32,12 @@ public class SimulationDTO {
     }
 
     public SimulationDTO(int id, Date date, SimulationOutputDTO simulationOutput,
-                         WorldDefinitionDTO worldInstanceDTO) {
+                         WorldDefinitionDTO worldInstanceDTO, String userName) {
         this.id = id;
         this.date = date;
         this.simulationOutput = simulationOutput;
         this.worldDefinitionDTO = worldInstanceDTO;
+        this.userName = userName;
 
     }
 

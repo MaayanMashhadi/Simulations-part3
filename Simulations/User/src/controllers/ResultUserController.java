@@ -15,6 +15,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import okhttp3.*;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
 import java.util.List;
@@ -54,6 +55,7 @@ public class ResultUserController {
     ObservableList<DataTable> entityDataList;
     private boolean alertShown = false;
     public void initialize() {
+        requestForBuildSimulationUser();
         ScheduledExecutorService asksForManager = Executors.newSingleThreadScheduledExecutor();
         asksForManager.scheduleAtFixedRate(() ->{requestSimulationManager();}, 0, 1, TimeUnit.SECONDS);
         Platform.runLater(() -> {loadSimulationList();});
@@ -93,6 +95,29 @@ public class ResultUserController {
 
             }}, 0, 1, TimeUnit.SECONDS);
 
+    }
+
+    private void requestForBuildSimulationUser(){
+        String RESOURCE = "/Server_Web_exploded/build-simulation-per-user";
+        Request request = new Request.Builder()
+                .url(BASE_URL + RESOURCE)
+                .get()
+                .build();
+        Call call = HTTP_CLIENT.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+            @Override
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                if (response.isSuccessful()) {
+
+                } else {
+                    // Handle unsuccessful response here
+                }
+            }
+        });
     }
 
     private void requestSimulationManager(){
@@ -408,12 +433,31 @@ public class ResultUserController {
     }
 
 
-
+    private List<SimulationDTO> requestForSimulationUser(){
+        String RESOURCE = "/Server_Web_exploded/get-simulations-per-user";
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        Request request = new Request.Builder()
+                .url(BASE_URL + RESOURCE)
+                .get()
+                .build();
+        Call call = HTTP_CLIENT.newCall(request);
+        List<SimulationDTO> simulationDTOList = null;
+        try(Response response = call.execute()){
+            if(response.isSuccessful()){
+                simulationDTOList = gson.fromJson(response.body().string(), new TypeToken<List<SimulationDTO>>(){}.getType());
+            }
+            response.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return simulationDTOList;
+    }
 
     private void loadSimulationList(){
         SimulationDTO findSimulation = null;
         Thread labelOfRunStop;
-        for(SimulationDTO simulationDTO : simulationManagerDTO.getSimulationList()){
+        for(SimulationDTO simulationDTO : requestForSimulationUser()){
             labelOfRunStop = new Thread(() -> {
                 if (requestEndSimulation(simulationDTO.getId())) {
                     Platform.runLater(() -> {

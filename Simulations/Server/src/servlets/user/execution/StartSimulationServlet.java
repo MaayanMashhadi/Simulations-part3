@@ -9,6 +9,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import utils.SessionUtils;
 
 import java.io.IOException;
 
@@ -16,11 +17,18 @@ import java.io.IOException;
 public class StartSimulationServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String environmentManager = req.getParameter("environmentManager");
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        ActiveEnvironmentDTO activeEnvironmentDTO = gson.fromJson(environmentManager, ActiveEnvironmentDTO.class);
-        Facade facade = (Facade) getServletContext().getAttribute("facade");
-        facade.startSimulation(activeEnvironmentDTO);
-        resp.getWriter().println("Start simulation successful");
+        String username = SessionUtils.getUsername(req);
+        if (username == null) {
+            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        }
+        else{
+            String environmentManager = req.getParameter("environmentManager");
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            ActiveEnvironmentDTO activeEnvironmentDTO = gson.fromJson(environmentManager, ActiveEnvironmentDTO.class);
+            Facade facade = (Facade) getServletContext().getAttribute("facade");
+            facade.startSimulation(activeEnvironmentDTO, username);
+            resp.getWriter().println("Start simulation successful");
+        }
+
     }
 }

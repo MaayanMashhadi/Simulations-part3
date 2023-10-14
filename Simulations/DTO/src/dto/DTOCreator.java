@@ -36,7 +36,7 @@ public class DTOCreator {
         List<SimulationDTO> simulationDTOList = new ArrayList<>();
         SimulationDTO simulationDTO;
         for(Simulation simulation : pastSimulation){
-            simulationDTO = createSimulationDTO(simulation.getWorldDefinition(),simulation, simulation.getSimulationOutput());
+            simulationDTO = createSimulationDTO(simulation.getWorldDefinition(),simulation, simulation.getSimulationOutput(), simulation.getUserName());
             simulationDTOList.add(simulationDTO);
         }
         return new SimulationManagerDTO(simulationDTOList);
@@ -374,14 +374,15 @@ public class DTOCreator {
 
 
 
-    public SimulationDTO createSimulationDTO(WorldDefinition worldDefinition,Simulation simulation, SimulationOutput simulationOutput){
+    public SimulationDTO createSimulationDTO(WorldDefinition worldDefinition,Simulation simulation, SimulationOutput simulationOutput,
+                                             String userName){
         WorldDefinitionDTO worldDefinitionDTO= createWorldDefinitionDTO(worldDefinition);
         SimulationOutputDTO simulationOutputDTO = null;
         if(simulationOutput != null){
              simulationOutputDTO = new SimulationOutputDTO(simulation.getId(),simulationOutput.getReasonsOfEnding());
         }
         SimulationDTO simulationDTO = new SimulationDTO(simulation.getId(),simulation.getDate(), simulationOutputDTO,
-                worldDefinitionDTO);
+                worldDefinitionDTO, userName);
         //simulationDTO.setCurrentDetailsDTO(simulation.getCurrentDetailsDTO());
 
         return simulationDTO;

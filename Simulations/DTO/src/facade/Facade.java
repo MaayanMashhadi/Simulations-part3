@@ -140,7 +140,7 @@ public class Facade {
     }
 
     public SimulationDTO startSimulationInHistory(ActiveEnvironmentDTO activeEnvironmentDTO,
-                                                  List<EntityDefinitionDTO> population) throws JAXBException {
+                                                  List<EntityDefinitionDTO> population, String userName) throws JAXBException {
         //worldDefinition = generator.fromXmlFileToObject(file);
         ActiveEnvironment activeEnvironment = createEnvVarible(activeEnvironmentDTO);
         for(EntityDefinitionDTO entityDefinition : population){
@@ -152,11 +152,11 @@ public class Facade {
             }
         }
         SimulationDTO simulationDTO = simulationsManager.startSimulation(activeEnvironment,worldDefinition,
-                simulationHistory);
+                simulationHistory, userName);
         return simulationDTO;
     }
 
-    public SimulationDTO startSimulation(ActiveEnvironmentDTO activeEnvironmentDTO){
+    public SimulationDTO startSimulation(ActiveEnvironmentDTO activeEnvironmentDTO, String userName){
         ActiveEnvironment activeEnvironment = createEnvVarible(activeEnvironmentDTO);
       /** worldInstance = new WorldInstance(worldDefinition, activeEnvironment);
 
@@ -167,7 +167,7 @@ public class Facade {
         SimulationDTO simulationDTO1 = dtoCreator.createSimulationDTO(worldDefinition,simulation, simulation.getSimulationOutput());
         return simulationDTO1;*/
        SimulationDTO simulationDTO = simulationsManager.startSimulation(activeEnvironment,worldDefinition,
-               simulationHistory);
+               simulationHistory, userName);
        return simulationDTO;
     }
     public void setSimulationHistory(SimulationHistoryDTO simulationHistory) {

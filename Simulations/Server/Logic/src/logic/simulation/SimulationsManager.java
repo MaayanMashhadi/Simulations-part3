@@ -47,12 +47,13 @@ public class SimulationsManager {
     }
 
     public SimulationDTO startSimulation(ActiveEnvironment activeEnvironment, WorldDefinition worldDefinition,
-                                         SimulationHistoryDTO simulationHistory){
+                                         SimulationHistoryDTO simulationHistory, String userName){
        WorldInstance worldInstance = new WorldInstance(worldDefinition, activeEnvironment,
                simulationHistory);
 
         Simulation simulation = new Simulation(worldInstance,worldDefinition);
         simulation.setSimulationHistory(simulationHistory);
+        simulation.setUserName(userName);
         currentRunningSimulation = simulation;
         this.addSimulation(simulation);
         threadPool.execute(simulation);

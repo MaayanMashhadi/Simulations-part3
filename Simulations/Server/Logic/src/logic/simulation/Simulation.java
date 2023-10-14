@@ -40,6 +40,15 @@ public class Simulation implements Runnable {
     private boolean isRunning = false;
     private Object pauseLock = new Object();
     private DTOCreator dtoCreator = new DTOCreator();
+    private String userName;
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
     public void setSimulationHistory(SimulationHistoryDTO simulationHistory) {
         this.simulationHistory = simulationHistory;
@@ -129,7 +138,7 @@ public class Simulation implements Runnable {
     }
 
     public void run() {
-        simulationDTO = dtoCreator.createSimulationDTO(worldDefinition, this, simulationOutput);
+        simulationDTO = dtoCreator.createSimulationDTO(worldDefinition, this, simulationOutput, userName);
         createDetails(0, 0, worldInstance.getWorldDefinition().getPopulation());
         simulationDTO.setCurrentDetailsDTO(currentDetailsDTO);
         isRunning = true;
@@ -193,7 +202,7 @@ public class Simulation implements Runnable {
             simulationEndedLatch.countDown();
 
         }
-        simulationDTO = dtoCreator.createSimulationDTO(worldDefinition, this, simulationOutput);
+        simulationDTO = dtoCreator.createSimulationDTO(worldDefinition, this, simulationOutput, userName);
     }
 
     public SimulationDTO getSimulationDTO() {
