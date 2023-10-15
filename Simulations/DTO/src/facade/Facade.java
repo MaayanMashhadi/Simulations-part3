@@ -14,6 +14,7 @@ import logic.execution.instance.environment.impl.ActiveEnvironmentImpl;
 import logic.execution.instance.property.api.PropertyInstance;
 import logic.execution.instance.property.impl.PropertyInstanceImpl;
 import logic.simulation.*;
+import logic.terminateCondition.TerminateCondition;
 import logic.world.WorldDefinition;
 import logic.world.WorldInstance;
 
@@ -62,13 +63,24 @@ public class Facade {
     }
 
     public WorldDefinitionDTO generatorOperation(String file, InputStream fileContent) throws JAXBException, IllegalArgumentException {
-        generator = new GenerateXML();
-       worldDefinition = generator.fromXmlFileToObject(file, fileContent);
+       worldDefinition =GenerateXML.fromXmlFileToObject(file, fileContent);
        numberOfThread = worldDefinition.getNumberOfThreads();
        WorldDefinitionDTO worldDefinitionDTO = dtoCreator.createWorldDefinitionDTO(worldDefinition);
        this.file = file;
         return worldDefinitionDTO;
 
+    }
+    public WorldDefinitionDTO createExistingWorld(){
+        worldDefinition = GenerateXML.buildFromExistingWorld();
+        numberOfThread = worldDefinition.getNumberOfThreads();
+        WorldDefinitionDTO worldDefinitionDTO = dtoCreator.createWorldDefinitionDTO(worldDefinition);
+        return worldDefinitionDTO;
+    }
+    public void addTerminateCondition(TerminateCondition terminateCondition){
+        if(worldDefinition.getTerminateConditions().size() > 0){
+            createExistingWorld();
+        }
+        worldDefinition.addTerminateCondition(terminateCondition);
     }
 
     public void createThreadPool(int numberOfThread){

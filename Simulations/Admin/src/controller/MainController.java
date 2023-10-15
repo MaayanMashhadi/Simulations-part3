@@ -50,6 +50,7 @@ public class MainController {
                 } else {
                     // Handle unsuccessful response here
                 }
+                response.close();
             }
         });
     }
@@ -83,7 +84,9 @@ public class MainController {
                     // Handle unsuccessful response here
                     System.err.println("HTTP Error: " + response.code());
                 }
+                response.close();
             }
+
         });
 
     }

@@ -116,6 +116,7 @@ public class ResultUserController {
                 } else {
                     // Handle unsuccessful response here
                 }
+                response.close();
             }
         });
     }
@@ -176,7 +177,7 @@ public class ResultUserController {
 
         if (selectedItem != null) {
             String[] split = selectedItem.split(" ");
-            int id = Integer.parseInt(split[2]);
+            int id = Integer.parseInt(split[3]);
             SimulationDTO simulationForDetails = null;
             for (SimulationDTO simulation : simulationManagerDTO.getSimulationList()) {
                 if (id == simulation.getId()) {
@@ -208,7 +209,7 @@ public class ResultUserController {
         if (selectedSimulation != null) {
             entityDataList = FXCollections.observableArrayList();
             String[] split = selectedSimulation.split(" ");
-            int id = Integer.parseInt(split[2]);
+            int id = Integer.parseInt(split[3]);
             SimulationDTO simulationForDetails = null;
             for (SimulationDTO simulation : simulationManagerDTO.getSimulationList()) {
                 if (id == simulation.getId()) {
@@ -286,6 +287,7 @@ public class ResultUserController {
                 } else {
                     // Handle unsuccessful response here
                 }
+                response.close();
             }
         });
     }
@@ -343,6 +345,7 @@ public class ResultUserController {
                 } else {
                     // Handle unsuccessful response here
                 }
+                response.close();
             }
         });
     }
@@ -353,7 +356,7 @@ public class ResultUserController {
         if (selectedSimulation != null) {
             Thread thread = new Thread(() -> {
                 String[] split = selectedSimulation.split(" ");
-                int id = Integer.parseInt(split[2]);
+                int id = Integer.parseInt(split[3]);
                 //TODO : request from server to pause
                 for(SimulationDTO simulation : simulationManagerDTO.getSimulationList()){
                     if(simulation.getId() == id){
@@ -372,7 +375,7 @@ public class ResultUserController {
         if (selectedSimulation != null) {
             Thread thread = new Thread(() -> {
                 String[] split = selectedSimulation.split(" ");
-                int id = Integer.parseInt(split[2]);
+                int id = Integer.parseInt(split[3]);
                 //TODO: request from server to resume
                 for(SimulationDTO simulation : simulationManagerDTO.getSimulationList()){
                     if(simulation.getId() == id){
@@ -390,7 +393,7 @@ public class ResultUserController {
         if (selectedSimulation != null) {
             Thread thread = new Thread(() -> {
                 String[] split = selectedSimulation.split(" ");
-                int id = Integer.parseInt(split[2]);
+                int id = Integer.parseInt(split[3]);
                 //TODO: request from server to stop
                 for(SimulationDTO simulation : simulationManagerDTO.getSimulationList()){
                     if(simulation.getId() == id){
@@ -409,7 +412,7 @@ public class ResultUserController {
         if (selectedSimulation != null ) {
             SimulationDTO simulationEnding;
             String[] split = selectedSimulation.split(" ");
-            int id = Integer.parseInt(split[2]);
+            int id = Integer.parseInt(split[3]);
             //TODO: request from server to rerun
             requestSimulationManager();
             simulationEnding = simulationManagerDTO.getSimulationList().stream().filter(simulation -> simulation.getId() == id).findFirst().orElse(null);
@@ -461,12 +464,12 @@ public class ResultUserController {
             labelOfRunStop = new Thread(() -> {
                 if (requestEndSimulation(simulationDTO.getId())) {
                     Platform.runLater(() -> {
-                        executionListView.getItems().add("S simulation " + simulationDTO.getId() + " - date: " + simulationDTO.getDate());
+                        executionListView.getItems().add("S simulation " + simulationDTO.getSimulationName() + " "+ simulationDTO.getId() + " - date: " + simulationDTO.getDate());
                     });
                 } else {
                     Platform.runLater(() -> {
 
-                        executionListView.getItems().add("R simulation " + simulationDTO.getId() + " - date: " + simulationDTO.getDate());
+                        executionListView.getItems().add("R simulation " + simulationDTO.getSimulationName() + " "+ simulationDTO.getId() + " - date: " + simulationDTO.getDate());
                             //showCurrentTicks(simulationDTO.getId());
 
 
@@ -513,11 +516,15 @@ public class ResultUserController {
         String selectedItem = executionListView.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
             String[] split = selectedItem.split(" ");
-            int id = Integer.parseInt(split[2]);
+            int id = Integer.parseInt(split[3]);
             //requestSimulationManager();
             SimulationDTO simulationForDetails = simulationManagerDTO.getSimulationList().stream().filter(simulation -> id == simulation.getId()).findFirst().orElse(null);
+            SimulationCurrentDetailsDTO simulationCurrentDetailsDTO = requestForCurrentDetailsSimulation(simulationForDetails.getId());
+            if(simulationCurrentDetailsDTO != null){
                 numberOfTick.setText(
                         Integer.toString(requestForCurrentDetailsSimulation(simulationForDetails.getId()).getCurrentTick()));
+            }
+
 
 
             if(requestEndSimulation(simulationForDetails.getId()) && !alertShown){
@@ -538,7 +545,7 @@ public class ResultUserController {
         String selectedItem = executionListView.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
             String[] split = selectedItem.split(" ");
-            int id = Integer.parseInt(split[2]);
+            int id = Integer.parseInt(split[3]);
             SimulationDTO simulationForDetails = null;
             //requestSimulationManager();
             for (SimulationDTO simulation : simulationManagerDTO.getSimulationList()) {
@@ -563,7 +570,7 @@ public class ResultUserController {
         String selectedItem = executionListView.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
             String[] split = selectedItem.split(" ");
-            int id = Integer.parseInt(split[2]);
+            int id = Integer.parseInt(split[3]);
             SimulationDTO chosenSimulation = null;
             for(SimulationDTO simulation : simulationManagerDTO.getSimulationList()){
                 if(simulation.getId() == id){

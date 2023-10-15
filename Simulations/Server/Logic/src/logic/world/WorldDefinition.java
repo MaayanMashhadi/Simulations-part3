@@ -26,6 +26,15 @@ public class WorldDefinition {
     private String name;
     private int sleep;
 
+    public void initialize(){
+        ticks = 0;
+        this.terminateConditions = new ArrayList<>();
+        for(EntityDefinition entityDefinition : population){
+            entityDefinition.setStartPopulation(0);
+            entityDefinition.setEndPopulation(0);
+        }
+    }
+
     public WorldDefinition(){
         ticks = 0;
         population = new ArrayList<>();
@@ -100,6 +109,9 @@ public class WorldDefinition {
     }
 
     public void addTerminateCondition(TerminateCondition terminateCondition){
+        if(terminateConditions.size() > 0){
+
+        }
         terminateConditions.add(terminateCondition);
     }
 

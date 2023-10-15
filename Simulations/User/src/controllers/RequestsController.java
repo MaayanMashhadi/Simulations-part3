@@ -121,6 +121,7 @@ public class RequestsController {
                             throw new RuntimeException(e);
                         }
                         alert.showAndWait();
+                        response.close();
                     });
                 }
 
@@ -169,6 +170,7 @@ public class RequestsController {
 
 
                             requestTable.setItems(dataListTable);
+                            response.close();
 
 
                         });
@@ -372,6 +374,7 @@ public class RequestsController {
 
 
                             requestTable.setItems(dataListTable);
+                            response.close();
 
 
                         });

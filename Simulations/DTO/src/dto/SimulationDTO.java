@@ -14,6 +14,7 @@ public class SimulationDTO {
     private boolean endSimualtion;
     private boolean isRUnning = false;
     private SimulationCurrentDetailsDTO currentDetailsDTO;
+    private String simulationName;
 
     public String getUserName() {
         return userName;
@@ -32,13 +33,18 @@ public class SimulationDTO {
     }
 
     public SimulationDTO(int id, Date date, SimulationOutputDTO simulationOutput,
-                         WorldDefinitionDTO worldInstanceDTO, String userName) {
+                         WorldDefinitionDTO worldInstanceDTO, String userName, String nameSimulation) {
         this.id = id;
         this.date = date;
         this.simulationOutput = simulationOutput;
         this.worldDefinitionDTO = worldInstanceDTO;
         this.userName = userName;
+        this.simulationName = nameSimulation;
 
+    }
+
+    public String getSimulationName() {
+        return simulationName;
     }
 
     public void setWaitingSimulation(boolean waitingSimulation) {

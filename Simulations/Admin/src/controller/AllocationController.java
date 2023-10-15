@@ -104,6 +104,7 @@ public class AllocationController {
                             throw new RuntimeException(e);
                         }
                         alert.showAndWait();
+                        response.close();
                     });
                 }
 
@@ -160,6 +161,7 @@ public class AllocationController {
                             }
 
                     }
+                    response.close();
 
                 }
             }

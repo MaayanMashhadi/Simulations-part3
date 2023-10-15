@@ -9,6 +9,7 @@ import logic.execution.instance.property.api.PropertyInstance;
 import logic.rule.Rule;
 import logic.rule.action.api.Action;
 import logic.rule.action.api.ActionType;
+import logic.terminateCondition.TerminateByBoth;
 import logic.terminateCondition.TerminateBySeconds;
 import logic.terminateCondition.TerminateByTicks;
 import logic.terminateCondition.TerminateCondition;
@@ -138,7 +139,7 @@ public class Simulation implements Runnable {
     }
 
     public void run() {
-        simulationDTO = dtoCreator.createSimulationDTO(worldDefinition, this, simulationOutput, userName);
+        simulationDTO = dtoCreator.createSimulationDTO(worldDefinition, this, simulationOutput, userName, worldDefinition.getName());
         createDetails(0, 0, worldInstance.getWorldDefinition().getPopulation());
         simulationDTO.setCurrentDetailsDTO(currentDetailsDTO);
         isRunning = true;
@@ -202,7 +203,7 @@ public class Simulation implements Runnable {
             simulationEndedLatch.countDown();
 
         }
-        simulationDTO = dtoCreator.createSimulationDTO(worldDefinition, this, simulationOutput, userName);
+        simulationDTO = dtoCreator.createSimulationDTO(worldDefinition, this, simulationOutput, userName, worldDefinition.getName());
     }
 
     public SimulationDTO getSimulationDTO() {
@@ -326,7 +327,17 @@ public class Simulation implements Runnable {
        }
        List<TerminateCondition> terminateConditions = worldInstance.getTerminateConditions();
        for(TerminateCondition terminateCondition : terminateConditions){
-           if(terminateCondition instanceof TerminateByTicks){
+           if(terminateCondition instanceof TerminateByBoth){
+               if(terminateCondition.getCount() <= worldInstance.getTicks() &&
+                       terminateCondition.getSeconds() <= worldInstance.getSeconds()){
+                   simulationOutput.setReasonsOfEnding("the terminate condition by both" +
+                           " was invoked");
+                   endSimulation = true;
+                   simulationDTO.setEndSimualtion(endSimulation);
+                   return;
+               }
+           }
+           else if(terminateCondition instanceof TerminateByTicks){
                if(terminateCondition.getCount() == worldInstance.getTicks()){
                    simulationOutput.setReasonsOfEnding("the terminate condition by ticks" +
                            " was invoked");

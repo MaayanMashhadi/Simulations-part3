@@ -78,6 +78,7 @@ public class LoginController {
                         alert.setHeaderText(null);
                         alert.setContentText("Username already exists. Please enter a different username.");
                         alert.showAndWait();
+
                     });
                 }
                 else if (response.code() == HttpServletResponse.SC_CONFLICT) {

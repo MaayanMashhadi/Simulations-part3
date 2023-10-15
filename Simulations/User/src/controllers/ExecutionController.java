@@ -104,6 +104,7 @@ public class ExecutionController {
                 if(response.isSuccessful()){
 
                 }
+                response.close();
 
             }
         });
@@ -291,6 +292,7 @@ public class ExecutionController {
                         alert.showAndWait();
                     });
                 }
+                response.close();
 
             }
         });
@@ -431,6 +433,7 @@ public class ExecutionController {
             if(response.isSuccessful()){
                 result = gson.fromJson(response.body().string(), PropertyInstanceDTO.class);
             }
+            response.close();
         }
         catch (IOException e) {
             e.printStackTrace();

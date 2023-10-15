@@ -117,6 +117,7 @@ public class ManagementController {
                     System.err.println("HTTP Error: " + response.code());
                 }
                 latch.countDown();
+                response.close();
             }
         });
         try {
@@ -187,6 +188,7 @@ public class ManagementController {
                                 alert.setHeaderText(null);
                                 alert.setContentText("Thread count updated successfully");
                                 alert.showAndWait();
+                                response.close();
                             });
                         }
 
@@ -257,6 +259,7 @@ public class ManagementController {
                             throw new RuntimeException(e);
                         }
                         alert.showAndWait();
+                        response.close();
                     });
                 } else {
                     // Handle successful response here
@@ -267,6 +270,7 @@ public class ManagementController {
                         alert.setHeaderText(null);
                         alert.setContentText(responseBody);
                         alert.showAndWait();
+                        response.close();
                     });
                     simulationsRequest();
 
@@ -310,6 +314,7 @@ public class ManagementController {
                                  // Handle unsuccessful response here
                                  System.err.println("HTTP Error: " + response.code());
                              }
+                             response.close();
                          }
                      }
 

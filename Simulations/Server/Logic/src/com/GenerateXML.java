@@ -28,8 +28,16 @@ import logic.world.WorldDefinition;
 
 public class GenerateXML {
     private static SimulationBuilder builder = new SimulationBuilder();
+    private static PRDWorld world;
 
-    public WorldDefinition fromXmlFileToObject(String fileName, InputStream fileContent) throws JAXBException, IllegalArgumentException {
+    public static WorldDefinition buildFromExistingWorld(){
+        if(world != null){
+            return builder.buildWorld(world);
+        }
+        return null;
+    }
+
+    public static WorldDefinition fromXmlFileToObject(String fileName, InputStream fileContent) throws JAXBException, IllegalArgumentException {
         File file = new File(fileName);
 
         String extension = getFileExtension(fileName);
@@ -39,14 +47,14 @@ public class GenerateXML {
         JAXBContext jaxbContext = JAXBContext.newInstance(PRDWorld.class);
 
         Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-        PRDWorld world = (PRDWorld) jaxbUnmarshaller.unmarshal(fileContent);
+        world = (PRDWorld) jaxbUnmarshaller.unmarshal(fileContent);
         checkXML(world);
         WorldDefinition worldDefinition =  builder.buildWorld(world);
         checkIfArgumentIsNumber(worldDefinition.getRules());
         return worldDefinition;
     }
 
-    private String getFileExtension(String fileName) {
+    private static String getFileExtension(String fileName) {
         int dotIndex = fileName.lastIndexOf(".");
         if (dotIndex == -1) {
             return "";
@@ -54,7 +62,7 @@ public class GenerateXML {
         return fileName.substring(dotIndex + 1);
     }
 
-    private void checkXML(PRDWorld world) throws IllegalArgumentException{
+    private static void checkXML(PRDWorld world) throws IllegalArgumentException{
         checkDuplicateEnvironmentNames(world.getPRDEnvironment().getPRDEnvProperty());
         checkDuplicateProperties(world.getPRDEntities().getPRDEntity());
         checkIfEntityFromRuleExistsInWorld(world.getPRDRules().getPRDRule(),world.getPRDEntities().getPRDEntity());
@@ -62,7 +70,7 @@ public class GenerateXML {
         checkIfRowsAndColsInRange(world.getPRDGrid().getRows(), world.getPRDGrid().getColumns());
     }
 
-    private void checkIfRowsAndColsInRange(int rows, int cols) throws IllegalArgumentException{
+    private static void checkIfRowsAndColsInRange(int rows, int cols) throws IllegalArgumentException{
         if(rows < 10 || rows > 100) {
             throw new IllegalArgumentException("The number of rows: " + rows + " should be between 10 and 100");
         }
@@ -70,7 +78,7 @@ public class GenerateXML {
             throw new IllegalArgumentException("The number of columns: " + cols + " should be between 10 and 100");
         }
     }
-    public void checkIfArgumentIsNumber(List<Rule> rules) throws IllegalArgumentException{
+    public static void checkIfArgumentIsNumber(List<Rule> rules) throws IllegalArgumentException{
         for(Rule rule : rules){
             for(Action action : rule.getActionsToPerform()){
                 if (action.getActionType().name().equals("INCREASE")){
@@ -131,7 +139,7 @@ public class GenerateXML {
 
     }
 
-    private void checkIfEntityFromRuleExistsInWorld(List<PRDRule> rules, Collection<PRDEntity> entities) throws IllegalArgumentException{
+    private static void checkIfEntityFromRuleExistsInWorld(List<PRDRule> rules, Collection<PRDEntity> entities) throws IllegalArgumentException{
         boolean isFound = false;
         List<String> entitiesNames = new ArrayList<>();
         for(PRDEntity entity : entities)
@@ -171,7 +179,7 @@ public class GenerateXML {
         }
     }
 
-    private boolean checkIfEntityInCondition(PRDAction action, List<String> entitiesNames)
+    private static boolean checkIfEntityInCondition(PRDAction action, List<String> entitiesNames)
     {
         boolean entityInCond = false;
         for (PRDCondition condition : action.getPRDCondition().getPRDCondition()) {
@@ -208,7 +216,7 @@ public class GenerateXML {
         return entityInCond;
     }
 
-    private boolean checkIfEntityInProximity(PRDAction action, List<String> entitiesNames){
+    private static boolean checkIfEntityInProximity(PRDAction action, List<String> entitiesNames){
         boolean entityInProximity = false;
         if(entitiesNames.contains(action.getPRDBetween().getSourceEntity()) && entitiesNames.contains(action.getPRDBetween().getTargetEntity())) {
             for(PRDAction action1 : action.getPRDActions().getPRDAction()){
@@ -240,7 +248,7 @@ public class GenerateXML {
         return false;
     }
 
-    private void checkIfPropertyFromRuleExistsInWorld(List<PRDRule> rules, Collection<PRDEntity> entities) throws IllegalArgumentException {
+    private static void checkIfPropertyFromRuleExistsInWorld(List<PRDRule> rules, Collection<PRDEntity> entities) throws IllegalArgumentException {
         for(PRDRule rule: rules) {
             for(PRDAction action: rule.getPRDActions().getPRDAction()) {
                 if(action.getProperty() !=null && !isEntityPropertyExist(entities, action.getEntity(), action.getProperty())) {
@@ -252,7 +260,7 @@ public class GenerateXML {
         }
     }
 
-    private void checkDuplicateEnvironmentNames(List<PRDEnvProperty> environments) throws IllegalArgumentException {
+    private static void checkDuplicateEnvironmentNames(List<PRDEnvProperty> environments) throws IllegalArgumentException {
         Set<String> environmentNames = new HashSet<>();
         for (PRDEnvProperty environment : environments) {
             if (!environmentNames.add(environment.getPRDName())) {
@@ -261,7 +269,7 @@ public class GenerateXML {
         }
     }
 
-    private void checkDuplicateProperties(Collection<PRDEntity> entities) throws IllegalArgumentException {
+    private static void checkDuplicateProperties(Collection<PRDEntity> entities) throws IllegalArgumentException {
         Set<String> propertiesNames = new HashSet<>();
         for (PRDEntity entity : entities) {
             propertiesNames = new HashSet<>();
