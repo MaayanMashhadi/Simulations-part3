@@ -53,7 +53,7 @@ public class RequestProcessServlet extends HttpServlet {
             RequestDetailsDTO requestDetailsDTO;
             List<TerminateConditionDTO> terminateConditions = new ArrayList<>();
             if (terminateCondition != null) {
-                facade.addTerminateCondition(terminateCondition);
+                facade.addTerminateCondition(terminateCondition, simulationName);
                 requestDetailsDTO = new
                         RequestDetailsDTO(username,(Integer)getServletContext().getAttribute("requestsCounter"),
                         simulationName, Integer.parseInt(amountOfRunning),"pending",0,0, terminateConditions);

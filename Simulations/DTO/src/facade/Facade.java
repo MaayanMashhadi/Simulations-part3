@@ -70,15 +70,15 @@ public class Facade {
         return worldDefinitionDTO;
 
     }
-    public WorldDefinitionDTO createExistingWorld(){
-        worldDefinition = GenerateXML.buildFromExistingWorld(worldDefinition.getName());
+    public WorldDefinitionDTO createExistingWorld(String simulationName){
+        worldDefinition = GenerateXML.buildFromExistingWorld(simulationName);
         numberOfThread = worldDefinition.getNumberOfThreads();
         WorldDefinitionDTO worldDefinitionDTO = dtoCreator.createWorldDefinitionDTO(worldDefinition);
         return worldDefinitionDTO;
     }
-    public void addTerminateCondition(TerminateCondition terminateCondition){
+    public void addTerminateCondition(TerminateCondition terminateCondition, String simulationName){
         if(worldDefinition.getTerminateConditions().size() > 0){
-            createExistingWorld();
+            createExistingWorld(simulationName);
         }
         worldDefinition.addTerminateCondition(terminateCondition);
     }
