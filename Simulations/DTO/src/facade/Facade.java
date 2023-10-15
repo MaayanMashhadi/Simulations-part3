@@ -71,7 +71,7 @@ public class Facade {
 
     }
     public WorldDefinitionDTO createExistingWorld(){
-        worldDefinition = GenerateXML.buildFromExistingWorld();
+        worldDefinition = GenerateXML.buildFromExistingWorld(worldDefinition.getName());
         numberOfThread = worldDefinition.getNumberOfThreads();
         WorldDefinitionDTO worldDefinitionDTO = dtoCreator.createWorldDefinitionDTO(worldDefinition);
         return worldDefinitionDTO;

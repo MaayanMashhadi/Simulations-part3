@@ -108,7 +108,7 @@ public class MainController {
         try {
             //TODO: i don't need the facade here - just play with the dto...i canot use the facde here...
             //instead of using facade, i need to use the dtos inside him
-            if(simulationManagerDTO != null) {
+
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/screens/ResultsAdminScene.fxml"));
                 Parent resultSceneRoot = fxmlLoader.load();
                 ResultAdminController resultController = fxmlLoader.getController();
@@ -119,7 +119,7 @@ public class MainController {
 
                 hboxScene.getChildren().clear();
                 hboxScene.getChildren().add(resultSceneRoot);
-            }
+
 
             // Add new scene contents to HBox
         } catch (IOException e) {

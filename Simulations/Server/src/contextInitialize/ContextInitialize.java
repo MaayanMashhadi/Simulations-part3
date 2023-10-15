@@ -19,6 +19,7 @@ public class ContextInitialize implements ServletContextListener {
         servletContextEvent.getServletContext().setAttribute("requestsCounter", 1);
         servletContextEvent.getServletContext().setAttribute("simulationUserManager", new SimulationUserManager());
 
+
     }
 
     @Override

@@ -13,6 +13,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import logic.simulation.HistogramSimulationManger;
 import logic.simulation.Simulation;
 
 import java.io.IOException;
@@ -33,8 +34,20 @@ public class CreateHistogramServlet extends HttpServlet {
         PropertyDefinitionDTO property = gson.fromJson(chosenProperty, PropertyDefinitionDTO.class);
         Facade facade = (Facade) getServletContext().getAttribute("facade");
         Simulation simulation = facade.getSimulationsManager().getSimulationById(id);
-        HistogramSimulationDTO histogramSimulationDTO =facade.createHistogramForSimulation(simulation.buildHistogramForSimulation(chosenEntity.getName(),
-                property.getName()));
+        HistogramSimulationManger manager = simulation.buildHistogramForSimulation(chosenEntity.getName(),
+                property.getName());
+        HistogramSimulationDTO histogramSimulationDTO =facade.createHistogramForSimulation(manager);
+       getServletContext().setAttribute("simulationHistogram", histogramSimulationDTO);
+
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HistogramSimulationDTO histogramSimulationDTO = (HistogramSimulationDTO) getServletContext().getAttribute("simulationHistogram");
+        Gson gson = new Gson();
+        String map = gson.toJson(histogramSimulationDTO.getHistogram());
+        String avg = gson.toJson(histogramSimulationDTO.getAverage());
+        String con = gson.toJson(histogramSimulationDTO.getConsistency());
         String result = gson.toJson(histogramSimulationDTO);
         resp.setContentType("application/json");
         resp.getWriter().write(result);

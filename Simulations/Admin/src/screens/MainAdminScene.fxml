@@ -53,7 +53,7 @@
                                  <children>
                                     <Button fx:id="allocationsButton" mnemonicParsing="false" onAction="#setOnActionAllocationsButton" text="Allocations" GridPane.columnIndex="4" GridPane.rowIndex="1" />
                                     <Button fx:id="ManagementButton" mnemonicParsing="false" onAction="#setOnActionManagementButton" prefHeight="25.0" prefWidth="88.0" text="Management" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                                    <Button fx:id="executionsHistoryButton" mnemonicParsing="false" text="Executions History" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+                                    <Button fx:id="executionsHistoryButton" mnemonicParsing="false" onAction="#setOnActionExecutionHistoryButton" text="Executions History" GridPane.columnIndex="5" GridPane.rowIndex="1" />
                                  </children>
                               </GridPane>
                            </center>

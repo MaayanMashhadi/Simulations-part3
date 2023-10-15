@@ -2,6 +2,7 @@ package controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import dto.*;
 import facade.Facade;
 import javafx.application.Platform;
@@ -35,7 +36,7 @@ public class ResultAdminController {
     private ListView<String> executionListView;
     @FXML private TreeView<String> treeOfHistogram;
     @FXML private FlowPane executionResult;
-//    @FXML private Button pauseButton;
+    //    @FXML private Button pauseButton;
     @FXML private Label numberOfTick;
     @FXML private Label numberOfSeconds;
     @FXML private TableView tableOfEntities;
@@ -57,6 +58,10 @@ public class ResultAdminController {
     ObservableList<DataTable> entityDataList;
     private boolean alertShown = false;
     public void initialize() {
+        requestForBuildSimulationUser();
+        ScheduledExecutorService asksForManager = Executors.newSingleThreadScheduledExecutor();
+        asksForManager.scheduleAtFixedRate(() ->{requestSimulationManager();}, 0, 1, TimeUnit.SECONDS);
+        Platform.runLater(() -> {loadSimulationList();});
         ObservableList<String> items = FXCollections.observableArrayList();
         entityDataList = FXCollections.observableArrayList();
         nameColumn = new TableColumn<>("Entity");
@@ -67,7 +72,7 @@ public class ResultAdminController {
 
         executionListView.setItems(items);
         currentTicksService.scheduleAtFixedRate(() -> {
-            requestSimulationManager();
+
 
             if (simulationManagerDTO != null) {
 
@@ -82,7 +87,6 @@ public class ResultAdminController {
             }}, 0, 1, TimeUnit.SECONDS);
 
         updateEntitiesService.scheduleAtFixedRate(() -> {
-            requestSimulationManager();
             if (simulationManagerDTO != null) {
 
 
@@ -96,8 +100,8 @@ public class ResultAdminController {
 
     }
 
-    private void requestSimulationManager(){
-        String RESOURCE = "/Server_Web_exploded/simulation-manager";
+    private void requestForBuildSimulationUser(){
+        String RESOURCE = "/Server_Web_exploded/build-simulation-per-user";
         Request request = new Request.Builder()
                 .url(BASE_URL + RESOURCE)
                 .get()
@@ -108,19 +112,67 @@ public class ResultAdminController {
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
             }
-
             @Override
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
                 if (response.isSuccessful()) {
-                    String jsonResponse = response.body().string();
-                    Gson gson = new Gson();
-                    simulationManagerDTO = gson.fromJson(jsonResponse, SimulationManagerDTO.class);
+
                 } else {
                     // Handle unsuccessful response here
                 }
+                response.close();
             }
         });
     }
+
+    private void requestSimulationManager(){
+        String RESOURCE = "/Server_Web_exploded/simulation-manager";
+        Request request = new Request.Builder()
+                .url(BASE_URL + RESOURCE)
+                .get()
+                .build();
+        Call call = HTTP_CLIENT.newCall(request);
+        try(Response response = call.execute()){
+            if(response.isSuccessful()){
+                String jsonResponse = response.body().string();
+                Gson gson = new Gson();
+                simulationManagerDTO = gson.fromJson(jsonResponse, SimulationManagerDTO.class);
+
+
+            }
+
+            response.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private boolean requestEndSimulation(int id){
+        String RESOURCE = "/Server_Web_exploded/end-simulation";
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String simulationID = gson.toJson(id);
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(BASE_URL + RESOURCE)
+                .newBuilder()
+                .addQueryParameter("simulationID", simulationID);
+        Request request = new Request.Builder()
+                .url(urlBuilder.build())
+                .get()
+                .build();
+        Call call = HTTP_CLIENT.newCall(request);
+        Boolean isEndSimulation = null;
+        try(Response response = call.execute()){
+            if(response.isSuccessful()){
+                isEndSimulation = gson.fromJson(response.body().string(), Boolean.class);
+            }
+            response.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return isEndSimulation;
+    }
+
 
     @FXML
     private void updateEntitiesGraph(){
@@ -128,7 +180,7 @@ public class ResultAdminController {
 
         if (selectedItem != null) {
             String[] split = selectedItem.split(" ");
-            int id = Integer.parseInt(split[2]);
+            int id = Integer.parseInt(split[3]);
             SimulationDTO simulationForDetails = null;
             for (SimulationDTO simulation : simulationManagerDTO.getSimulationList()) {
                 if (id == simulation.getId()) {
@@ -136,11 +188,11 @@ public class ResultAdminController {
                     break;
                 }
             }
-            if(simulationForDetails.getEndSimualtion()){
+            if(requestEndSimulation(simulationForDetails.getId())){
                 graphOfEntities.getData().clear();
                 graphOfEntities.setTitle("Entity Amount for Simulation: " + simulationForDetails.getId());
                 XYChart.Series<Number, Number> series = new XYChart.Series<>();
-                SimulationCurrentDetailsDTO simulationCurrentDetailsDTO = simulationForDetails.getCurrentDetailsDTO();
+                SimulationCurrentDetailsDTO simulationCurrentDetailsDTO =requestForCurrentDetailsSimulation(simulationForDetails.getId());
                 Map<Integer, List<Integer>> amoutOfEntities = simulationCurrentDetailsDTO.getAmoutOfEntitiesByTicks();
                 for(Map.Entry<Integer, List<Integer>> entry : amoutOfEntities.entrySet()){
                     for(Integer amount : entry.getValue()){
@@ -160,7 +212,7 @@ public class ResultAdminController {
         if (selectedSimulation != null) {
             entityDataList = FXCollections.observableArrayList();
             String[] split = selectedSimulation.split(" ");
-            int id = Integer.parseInt(split[2]);
+            int id = Integer.parseInt(split[3]);
             SimulationDTO simulationForDetails = null;
             for (SimulationDTO simulation : simulationManagerDTO.getSimulationList()) {
                 if (id == simulation.getId()) {
@@ -172,7 +224,7 @@ public class ResultAdminController {
                 boolean found = false;
                 for (DataTable existingData : entityDataList) {
                     if (existingData.getEntityName().equals(entity.getName())) {
-                        existingData.setEntityAmount(simulationForDetails.getCurrentDetailsDTO()
+                        existingData.setEntityAmount(requestForCurrentDetailsSimulation(simulationForDetails.getId())
                                 .getAmoutOfEntities().get(entity.getName()));
                         found = true;
                         break;
@@ -181,7 +233,7 @@ public class ResultAdminController {
 
                 if (!found) {
                     entityDataList.add(new DataTable(entity.getName(),
-                            simulationForDetails.getCurrentDetailsDTO()
+                            requestForCurrentDetailsSimulation(simulationForDetails.getId())
                                     .getAmoutOfEntities().get(entity.getName())));
                 }
             }
@@ -190,121 +242,72 @@ public class ResultAdminController {
         }
 
     }
+    private SimulationCurrentDetailsDTO requestForCurrentDetailsSimulation(int id){
+        String RESOURCE = "/Server_Web_exploded/current-datails-simulation";
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String simulationID = gson.toJson(id);
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(BASE_URL + RESOURCE)
+                .newBuilder()
+                .addQueryParameter("simulationID", simulationID);
+        Request request = new Request.Builder()
+                .url(urlBuilder.build())
+                .get()
+                .build();
+        Call call = HTTP_CLIENT.newCall(request);
+        SimulationCurrentDetailsDTO simulationCurrentDetailsDTO = null;
+        try(Response response = call.execute()){
+            if(response.isSuccessful()){
+                simulationCurrentDetailsDTO = gson.fromJson(response.body().string(), SimulationCurrentDetailsDTO.class);
+            }
+            response.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return simulationCurrentDetailsDTO;
+    }
 
-//    @FXML
-//    private void onPauseButtonClicked(ActionEvent event) {
-//        String selectedSimulation = executionListView.getSelectionModel().getSelectedItem();
-//        if (selectedSimulation != null) {
-//            Thread thread = new Thread(() -> {
-//                String[] split = selectedSimulation.split(" ");
-//                int id = Integer.parseInt(split[2]);
-//                //TODO : request from server to pause
-//                for(Simulation simulation : facade.getSimulationsManager().getSimulationList()){
-//                    if(simulation.getId() == id){
-//                        facade.pauseSimulation(simulation.getId());
-//                        break;
-//                    }
-//                }
-//            });
-//            thread.start();
-//
-//        }
-//    }
-//    @FXML
-//    private void onResumeButtonClicked(ActionEvent event) {
-//        String selectedSimulation = executionListView.getSelectionModel().getSelectedItem();
-//        if (selectedSimulation != null) {
-//            Thread thread = new Thread(() -> {
-//                String[] split = selectedSimulation.split(" ");
-//                int id = Integer.parseInt(split[2]);
-//                //TODO: request from server to resume
-//                for(Simulation simulation : facade.getSimulationsManager().getSimulationList()){
-//                    if(simulation.getId() == id){
-//                        facade.resumeSimulation(simulation.getId());
-//                        break;
-//                    }
-//                }
-//            });
-//            thread.start();
-//        }
-//    }
-//    @FXML
-//    private void onStopButtonClicked(ActionEvent event) {
-//        String selectedSimulation = executionListView.getSelectionModel().getSelectedItem();
-//        if (selectedSimulation != null) {
-//            Thread thread = new Thread(() -> {
-//                String[] split = selectedSimulation.split(" ");
-//                int id = Integer.parseInt(split[2]);
-//                //TODO: request from server to stop
-//                for(Simulation simulation : facade.getSimulationsManager().getSimulationList()){
-//                    if(simulation.getId() == id){
-//                        facade.stopSimulation(simulation.getId());
-//                        /**Platform.runLater(() -> {
-//                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//                         alert.setTitle("Simulation Finished");
-//                         alert.setHeaderText(null);
-//                         alert.setContentText(simulation.getSimulationOutput().getReasonsOfEnding());
-//                         alert.showAndWait();
-//                         });*/
-//                        break;
-//                    }
-//                }
-//            });
-//            thread.start();
-//        }
-//    }
-//    @FXML
-//    private void onRerunButtonClicked(ActionEvent event) {
-//        String selectedSimulation = executionListView.getSelectionModel().getSelectedItem();
-//        if (selectedSimulation != null ) {
-//            Simulation simulationEnding;
-//            String[] split = selectedSimulation.split(" ");
-//            int id = Integer.parseInt(split[2]);
-//            //TODO: request from server to rerun
-//            simulationEnding = facade.getSimulationsManager().getSimulationList().stream().filter(simulation -> simulation.getId() == id).findFirst().orElse(null);
-//            rerunThread = new Thread(() -> {
-//                Platform.runLater(() -> {
-//                    if(simulationEnding.getEndSimulation()){
-//                        mainController.setSimulationHistory(simulationEnding);
-//                        mainController.loadNewExecutionSceneFromResultScene("/screens/NewExecutionScene.fxml");
-//
-//                    }
-//
-//
-//                });
-//            });
-//            rerunThread.start();
-//        }
-//
-//    }
     public void setHboxScene(HBox hboxScene) {
         this.hboxScene = hboxScene;
     }
 
 
-    public void setSimulationManagerDTO(SimulationManagerDTO simulationManagerDTO) {
-        this.simulationManagerDTO = simulationManagerDTO;
-        loadSimulationList();
-
+    private List<SimulationDTO> requestForSimulationUser(){
+        String RESOURCE = "/Server_Web_exploded/get-simulations-per-user";
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        Request request = new Request.Builder()
+                .url(BASE_URL + RESOURCE)
+                .get()
+                .build();
+        Call call = HTTP_CLIENT.newCall(request);
+        List<SimulationDTO> simulationDTOList = null;
+        try(Response response = call.execute()){
+            if(response.isSuccessful()){
+                simulationDTOList = gson.fromJson(response.body().string(), new TypeToken<List<SimulationDTO>>(){}.getType());
+            }
+            response.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return simulationDTOList;
     }
-
-
 
     private void loadSimulationList(){
         SimulationDTO findSimulation = null;
         Thread labelOfRunStop;
         for(SimulationDTO simulationDTO : simulationManagerDTO.getSimulationList()){
             labelOfRunStop = new Thread(() -> {
-                if (simulationDTO.getEndSimualtion()) {
+                if (requestEndSimulation(simulationDTO.getId())) {
                     Platform.runLater(() -> {
-                        executionListView.getItems().add("S simulation " + simulationDTO.getId() + " - date: " + simulationDTO.getDate());
+                        executionListView.getItems().add("S simulation " + simulationDTO.getSimulationName() + " "+ simulationDTO.getId() + " username: " + simulationDTO.getUserName() + " - date: " + simulationDTO.getDate());
                     });
                 } else {
                     Platform.runLater(() -> {
-                        if(simulationDTO.isRunning()){
-                            executionListView.getItems().add("R simulation " + simulationDTO.getId() + " - date: " + simulationDTO.getDate());
-                            //showCurrentTicks(simulationDTO.getId());
-                        }
+
+                        executionListView.getItems().add("R simulation " + simulationDTO.getSimulationName() + " "+ simulationDTO.getId() + " username: " + simulationDTO.getUserName() + " - date: " + simulationDTO.getDate());
+                        //showCurrentTicks(simulationDTO.getId());
+
 
                         //showCurrentTicks(simulationDTO.getId());
 
@@ -316,7 +319,7 @@ public class ResultAdminController {
             labelOfRunStop.start();
             ScheduledExecutorService someUpdateThread = Executors.newSingleThreadScheduledExecutor();
             someUpdateThread.scheduleAtFixedRate(() -> {
-                if (simulationDTO.getEndSimualtion()) {
+                if (requestEndSimulation(simulationDTO.getId())) {
                     Platform.runLater(() -> {
                         // Replace 'YourSimulationId' with the actual ID you're looking for
                         int targetSimulationId = simulationDTO.getId();
@@ -328,7 +331,7 @@ public class ResultAdminController {
 
                         // Check if the item was found, and then do something with it
                         item.ifPresent(foundItem -> {
-                            String updatedItem = foundItem.replace("R simulation", "S simulation");
+                            String updatedItem = foundItem.replace("R simulation ", "S simulation ");
 
                             // Update the item in the list view
                             int index = executionListView.getItems().indexOf(foundItem);
@@ -349,13 +352,18 @@ public class ResultAdminController {
         String selectedItem = executionListView.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
             String[] split = selectedItem.split(" ");
-            int id = Integer.parseInt(split[2]);
-            requestSimulationManager();
+            int id = Integer.parseInt(split[3]);
+            //requestSimulationManager();
             SimulationDTO simulationForDetails = simulationManagerDTO.getSimulationList().stream().filter(simulation -> id == simulation.getId()).findFirst().orElse(null);
+            SimulationCurrentDetailsDTO simulationCurrentDetailsDTO = requestForCurrentDetailsSimulation(simulationForDetails.getId());
+            if(simulationCurrentDetailsDTO != null){
+                numberOfTick.setText(
+                        Integer.toString(requestForCurrentDetailsSimulation(simulationForDetails.getId()).getCurrentTick()));
+            }
 
-            numberOfTick.setText(
-                    Integer.toString(simulationForDetails.getCurrentDetailsDTO().getCurrentTick()));
-            if(simulationForDetails.getEndSimualtion() && !alertShown){
+
+
+            if(requestEndSimulation(simulationForDetails.getId()) && !alertShown){
                 Platform.runLater(() -> {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Simulation Finished");
@@ -373,17 +381,22 @@ public class ResultAdminController {
         String selectedItem = executionListView.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
             String[] split = selectedItem.split(" ");
-            int id = Integer.parseInt(split[2]);
+            int id = Integer.parseInt(split[3]);
             SimulationDTO simulationForDetails = null;
-            requestSimulationManager();
+            //requestSimulationManager();
             for (SimulationDTO simulation : simulationManagerDTO.getSimulationList()) {
                 if (id == simulation.getId()) {
                     simulationForDetails = simulation;
                     break;
                 }
             }
-            numberOfSeconds.setText(
-                    Integer.toString(simulationForDetails.getCurrentDetailsDTO().getCurrentSecond()));
+            SimulationCurrentDetailsDTO simulationCurrentDetailsDTO = requestForCurrentDetailsSimulation(simulationForDetails.getId());
+            if(simulationCurrentDetailsDTO != null) {
+                numberOfSeconds.setText(
+                        Integer.toString(requestForCurrentDetailsSimulation(simulationForDetails.getId()).getCurrentSecond()));
+            }
+
+
 
         }
 
@@ -396,16 +409,15 @@ public class ResultAdminController {
         String selectedItem = executionListView.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
             String[] split = selectedItem.split(" ");
-            int id = Integer.parseInt(split[2]);
+            int id = Integer.parseInt(split[3]);
             SimulationDTO chosenSimulation = null;
-            requestSimulationManager();
             for(SimulationDTO simulation : simulationManagerDTO.getSimulationList()){
                 if(simulation.getId() == id){
                     chosenSimulation = simulation;
                     break;
                 }
             }
-            if(chosenSimulation.getEndSimualtion()){
+            if(requestEndSimulation(chosenSimulation.getId())){
                 showHistogramByEntity(chosenSimulation);
             }
 
@@ -433,7 +445,30 @@ public class ResultAdminController {
             numberOfEntity++;
         }
     }
-    private HistogramSimulationDTO requestForHistogram(Integer id, EntityDefinitionDTO chosenEntity, PropertyDefinitionDTO chosenProperty) {
+
+    private HistogramSimulationDTO requestForHistogram() {
+        String RESOURCE = "/Server_Web_exploded/create-histogram";
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        Request request = new Request.Builder()
+                .url(BASE_URL + RESOURCE)
+                .get()
+                .build();
+        Call call = HTTP_CLIENT.newCall(request);
+        HistogramSimulationDTO histogramSimulationDTO = null;
+        try(Response response = call.execute()){
+            if(response.isSuccessful()){
+                histogramSimulationDTO = gson.fromJson(response.body().string(), HistogramSimulationDTO.class);
+            }
+            response.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return histogramSimulationDTO;
+
+    }
+
+    private void requestForBuildHistogram(Integer id, EntityDefinitionDTO chosenEntity, PropertyDefinitionDTO chosenProperty){
         String RESOURCE = "/Server_Web_exploded/create-histogram";
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String idJson = gson.toJson(id);
@@ -449,37 +484,25 @@ public class ResultAdminController {
                 .post(formBody)
                 .build();
         Call call = HTTP_CLIENT.newCall(request);
-        final HistogramSimulationDTO[] histogramSimulationDTO = new HistogramSimulationDTO[1];
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
+        //HistogramSimulationDTO histogramSimulationDTO = null;
+        try(Response response = call.execute()){
+            if(response.isSuccessful()){
+                //histogramSimulationDTO = gson.fromJson(response.body().string(), HistogramSimulationDTO.class);
             }
-
-            @Override
-            public void onResponse(Call call, okhttp3.Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    Platform.runLater(() -> {
-                        try {
-                            String result = response.body().string();
-                            histogramSimulationDTO[0] = gson.fromJson(result, HistogramSimulationDTO.class);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    });
-                }
-
-            }
-        });
-        return histogramSimulationDTO[0];
+            response.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     @FXML
     private void showHistogramByProp(EntityDefinitionDTO chosenEntity, SimulationDTO simulation, int numberOfEntity){
         int numberOfProperty = 2;
         for (PropertyDefinitionDTO property : chosenEntity.getProperties()) {
             treeOfHistogram.getRoot().getChildren().get(numberOfEntity).getChildren().add(new TreeItem<>(property.getName())); //2
+            requestForBuildHistogram(simulation.getId(), chosenEntity, property);
             //TODO: the server will do it by dto and no simulation - the server will build the Histogram DTO by sending him the dto simulation
-            HistogramSimulationDTO histogramSimulationDTO =requestForHistogram(simulation.getId(), chosenEntity, property);
+            HistogramSimulationDTO histogramSimulationDTO =requestForHistogram();
             Map<Object, Integer> histogram = histogramSimulationDTO.getHistogram();
             if(!histogram.isEmpty()){
                 treeOfHistogram.getRoot().getChildren().get(numberOfEntity).getChildren().get(numberOfProperty).getChildren().add(new TreeItem<>("histogram: "));

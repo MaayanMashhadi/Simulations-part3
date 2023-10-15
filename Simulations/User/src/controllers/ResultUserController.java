@@ -162,7 +162,7 @@ public class ResultUserController {
             if(response.isSuccessful()){
                 isEndSimulation = gson.fromJson(response.body().string(), Boolean.class);
             }
-            response.close();
+            //response.close();
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -495,7 +495,7 @@ public class ResultUserController {
 
                         // Check if the item was found, and then do something with it
                         item.ifPresent(foundItem -> {
-                            String updatedItem = foundItem.replace("R simulation", "S simulation");
+                            String updatedItem = foundItem.replace("R simulation ", "S simulation ");
 
                             // Update the item in the list view
                             int index = executionListView.getItems().indexOf(foundItem);
@@ -554,8 +554,11 @@ public class ResultUserController {
                     break;
                 }
             }
+            SimulationCurrentDetailsDTO simulationCurrentDetailsDTO = requestForCurrentDetailsSimulation(simulationForDetails.getId());
+            if(simulationCurrentDetailsDTO != null) {
                 numberOfSeconds.setText(
                         Integer.toString(requestForCurrentDetailsSimulation(simulationForDetails.getId()).getCurrentSecond()));
+            }
 
 
 
@@ -607,20 +610,12 @@ public class ResultUserController {
         }
     }
 
-    private HistogramSimulationDTO requestForHistogram(Integer id, EntityDefinitionDTO chosenEntity, PropertyDefinitionDTO chosenProperty) {
+    private HistogramSimulationDTO requestForHistogram() {
         String RESOURCE = "/Server_Web_exploded/create-histogram";
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String idJson = gson.toJson(id);
-        String propertyJson = gson.toJson(chosenProperty);
-        String entityJson = gson.toJson(chosenEntity);
-        RequestBody formBody = new FormBody.Builder()
-                .add("simulationID", idJson)
-                .add("property", propertyJson)
-                .add("entity", entityJson)
-                .build();
         Request request = new Request.Builder()
                 .url(BASE_URL + RESOURCE)
-                .post(formBody)
+                .get()
                 .build();
         Call call = HTTP_CLIENT.newCall(request);
         HistogramSimulationDTO histogramSimulationDTO = null;
@@ -636,13 +631,42 @@ public class ResultUserController {
         return histogramSimulationDTO;
 
     }
+
+    private void requestForBuildHistogram(Integer id, EntityDefinitionDTO chosenEntity, PropertyDefinitionDTO chosenProperty){
+        String RESOURCE = "/Server_Web_exploded/create-histogram";
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String idJson = gson.toJson(id);
+        String propertyJson = gson.toJson(chosenProperty);
+        String entityJson = gson.toJson(chosenEntity);
+        RequestBody formBody = new FormBody.Builder()
+                .add("simulationID", idJson)
+                .add("property", propertyJson)
+                .add("entity", entityJson)
+                .build();
+        Request request = new Request.Builder()
+                .url(BASE_URL + RESOURCE)
+                .post(formBody)
+                .build();
+        Call call = HTTP_CLIENT.newCall(request);
+        //HistogramSimulationDTO histogramSimulationDTO = null;
+        try(Response response = call.execute()){
+            if(response.isSuccessful()){
+                //histogramSimulationDTO = gson.fromJson(response.body().string(), HistogramSimulationDTO.class);
+            }
+            response.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     @FXML
     private void showHistogramByProp(EntityDefinitionDTO chosenEntity, SimulationDTO simulation, int numberOfEntity){
         int numberOfProperty = 2;
         for (PropertyDefinitionDTO property : chosenEntity.getProperties()) {
             treeOfHistogram.getRoot().getChildren().get(numberOfEntity).getChildren().add(new TreeItem<>(property.getName())); //2
+            requestForBuildHistogram(simulation.getId(), chosenEntity, property);
             //TODO: the server will do it by dto and no simulation - the server will build the Histogram DTO by sending him the dto simulation
-            HistogramSimulationDTO histogramSimulationDTO =requestForHistogram(simulation.getId(), chosenEntity, property);
+            HistogramSimulationDTO histogramSimulationDTO =requestForHistogram();
             Map<Object, Integer> histogram = histogramSimulationDTO.getHistogram();
             if(!histogram.isEmpty()){
                 treeOfHistogram.getRoot().getChildren().get(numberOfEntity).getChildren().get(numberOfProperty).getChildren().add(new TreeItem<>("histogram: "));

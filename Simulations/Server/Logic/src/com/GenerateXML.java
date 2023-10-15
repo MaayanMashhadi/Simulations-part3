@@ -28,12 +28,16 @@ import logic.world.WorldDefinition;
 
 public class GenerateXML {
     private static SimulationBuilder builder = new SimulationBuilder();
-    private static PRDWorld world;
+    private static List<PRDWorld> worlds;
 
-    public static WorldDefinition buildFromExistingWorld(){
-        if(world != null){
-            return builder.buildWorld(world);
+    public static WorldDefinition buildFromExistingWorld(String worldName){
+        //tODO:dibug this
+        for(PRDWorld prdWorld : worlds){
+           if(prdWorld.getName().equals(worldName)){
+               return builder.buildWorld(prdWorld);
+           }
         }
+
         return null;
     }
 
@@ -44,12 +48,15 @@ public class GenerateXML {
         if (!extension.equalsIgnoreCase("xml")) {
             throw new IllegalArgumentException("File is not an XML file: " + fileName);
         }
+        if(worlds == null){
+            worlds = new ArrayList<>();
+        }
         JAXBContext jaxbContext = JAXBContext.newInstance(PRDWorld.class);
 
         Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-        world = (PRDWorld) jaxbUnmarshaller.unmarshal(fileContent);
-        checkXML(world);
-        WorldDefinition worldDefinition =  builder.buildWorld(world);
+        worlds.add((PRDWorld) jaxbUnmarshaller.unmarshal(fileContent));
+        checkXML(worlds.get(worlds.size()-1));
+        WorldDefinition worldDefinition =  builder.buildWorld(worlds.get(worlds.size()-1));
         checkIfArgumentIsNumber(worldDefinition.getRules());
         return worldDefinition;
     }

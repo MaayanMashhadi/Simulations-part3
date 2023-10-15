@@ -20,7 +20,13 @@ public class HistogramSimulationDTO {
             }
 
         }
-        average = amountOfProperty/population;
+        if(population != 0){
+            average = amountOfProperty/population;
+        }
+        else{
+            average = 0.0F;
+        }
+
 
     }
 

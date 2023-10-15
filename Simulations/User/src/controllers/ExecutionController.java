@@ -292,7 +292,7 @@ public class ExecutionController {
                         alert.showAndWait();
                     });
                 }
-                response.close();
+                //response.close();
 
             }
         });
