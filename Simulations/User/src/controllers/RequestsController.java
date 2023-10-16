@@ -70,6 +70,7 @@ public class RequestsController {
                     proceesRequest(selectedOption, selectedDTO);
                     Platform.runLater(() -> {
                         try {
+                            mainController.setWorldDefinitionDTOFromRequest(selectedDTO.getSimulationName());
                             mainController.loadExecutionScene();
                         } catch (IOException e) {
                             throw new RuntimeException(e);
@@ -86,15 +87,14 @@ public class RequestsController {
 
         }
     }
-    private void loadExecutionScene() throws IOException {
-        mainController.loadExecutionScene();
-    }
+
 
     private void proceesRequest(String option, RequestDetailsDTO selectedRequest){
         String RESOURCE = "/Server_Web_exploded/choose-running-simulation";
         RequestBody formBody = new FormBody.Builder()
                 .add("option", option)
                 .add("requestID",String.valueOf(selectedRequest.getRequestNumber()))
+                .add("simulationName",selectedRequest.getSimulationName())
                 .build();
 
         Request request = new Request.Builder()

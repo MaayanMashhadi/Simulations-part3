@@ -27,7 +27,7 @@ import java.util.concurrent.*;
 public class Facade {
     private GenerateXML generator;
     private WorldDefinition worldDefinition;
-
+    private List<WorldDefinition> worldDefinitions = new ArrayList<>();
     private WorldInstance worldInstance;
     private SimulationsManager simulationsManager;
     private SimulationManagerDTO simulationManagerDTO;
@@ -64,6 +64,8 @@ public class Facade {
 
     public WorldDefinitionDTO generatorOperation(String file, InputStream fileContent) throws JAXBException, IllegalArgumentException {
        worldDefinition =GenerateXML.fromXmlFileToObject(file, fileContent);
+        WorldDefinition worldDefinition1 = GenerateXML.buildFromExistingWorld(worldDefinition.getName());
+        worldDefinitions.add(worldDefinition1);
        numberOfThread = worldDefinition.getNumberOfThreads();
        WorldDefinitionDTO worldDefinitionDTO = dtoCreator.createWorldDefinitionDTO(worldDefinition);
        this.file = file;
@@ -76,11 +78,30 @@ public class Facade {
         WorldDefinitionDTO worldDefinitionDTO = dtoCreator.createWorldDefinitionDTO(worldDefinition);
         return worldDefinitionDTO;
     }
+    public WorldDefinitionDTO createWorldFromTheSameRequest(String simulationName){
+        for(WorldDefinition worldDefinition1 : worldDefinitions){
+            if(worldDefinition1.getName().equals(simulationName)){
+                worldDefinition = worldDefinition1;
+                break;
+            }
+        }
+        numberOfThread = worldDefinition.getNumberOfThreads();
+        WorldDefinitionDTO worldDefinitionDTO = dtoCreator.createWorldDefinitionDTO(worldDefinition);
+        return worldDefinitionDTO;
+    }
     public void addTerminateCondition(TerminateCondition terminateCondition, String simulationName){
         if(worldDefinition.getTerminateConditions().size() > 0){
             createExistingWorld(simulationName);
         }
         worldDefinition.addTerminateCondition(terminateCondition);
+        for(WorldDefinition worldDefinition1 : worldDefinitions){
+            if(worldDefinition1.getName().equals(worldDefinition.getName())){
+                for(TerminateCondition terminateCondition1 : worldDefinition.getTerminateConditions()){
+                    worldDefinition1.addTerminateCondition(terminateCondition1);
+                }
+                break;
+            }
+        }
     }
 
     public void createThreadPool(int numberOfThread){

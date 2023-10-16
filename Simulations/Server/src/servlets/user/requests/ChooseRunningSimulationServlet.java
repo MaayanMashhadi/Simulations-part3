@@ -1,11 +1,14 @@
 package servlets.user.requests;
 
 import dto.RequestDetailsDTO;
+import dto.WorldDefinitionDTO;
+import facade.Facade;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import logic.terminateCondition.TerminateCondition;
 import utils.SessionUtils;
 import utils.user.RequestsManager;
 
@@ -20,6 +23,7 @@ public class ChooseRunningSimulationServlet extends HttpServlet {
         String optionParam = req.getParameter("option");
         Integer requestID = Integer.parseInt(req.getParameter("requestID"));
         String username = SessionUtils.getUsername(req);
+        String simulationName = req.getParameter("simulationName");
         if (username == null) {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
@@ -29,6 +33,8 @@ public class ChooseRunningSimulationServlet extends HttpServlet {
                 if (requestDetailsDTO.getRequestNumber() == requestID) {
                     if(requestDetailsDTO.getAmountOfRunning() > 0){
                         requestDetailsDTO.setAmountOfRunning(requestDetailsDTO.getAmountOfRunning() - 1);
+                        Facade facade = (Facade) getServletContext().getAttribute("facade");
+                       WorldDefinitionDTO worldDefinitionDTO = facade.createWorldFromTheSameRequest(simulationName);
                         resp.getWriter().println("Update running simulation successfully");
                     }
                     else{

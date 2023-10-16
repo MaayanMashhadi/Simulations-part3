@@ -91,6 +91,14 @@ public class MainController {
             e.printStackTrace();
         }
     }
+    public void setWorldDefinitionDTOFromRequest(String simulationName) {
+        for(WorldDefinitionDTO worldDefinitionDTO1 : simulationsArray){
+            if(worldDefinitionDTO1.getName().equals(simulationName)){
+                worldDefinitionDTO = worldDefinitionDTO1;
+                break;
+            }
+        }
+    }
 
     public WorldDefinitionDTO[] getSimulationsArray() {
         return simulationsArray;
