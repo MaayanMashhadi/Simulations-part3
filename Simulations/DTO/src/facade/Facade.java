@@ -81,7 +81,12 @@ public class Facade {
     public WorldDefinitionDTO createWorldFromTheSameRequest(String simulationName){
         for(WorldDefinition worldDefinition1 : worldDefinitions){
             if(worldDefinition1.getName().equals(simulationName)){
+                List<TerminateCondition> terminateConditions = worldDefinition1.getTerminateConditions();
+                worldDefinition1 = GenerateXML.buildFromExistingWorld(simulationName);
                 worldDefinition = worldDefinition1;
+                for(TerminateCondition terminateCondition : terminateConditions){
+                    worldDefinition.addTerminateCondition(terminateCondition);
+                }
                 break;
             }
         }
