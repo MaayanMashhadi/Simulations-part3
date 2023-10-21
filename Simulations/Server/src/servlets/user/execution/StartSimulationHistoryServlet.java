@@ -29,7 +29,7 @@ public class StartSimulationHistoryServlet extends HttpServlet {
             Facade facade = (Facade) getServletContext().getAttribute("facade");
             try {
                 facade.startSimulationInHistory(facade.getSimulationHistory(id).getActiveEnvironmentDTO(),
-                        facade.getSimulationHistory(id).getEntityDefinitionsDTOS(), username);
+                        facade.getSimulationHistory(id).getEntityDefinitionsDTOS(), username,facade.getSimulationHistory(id).getName());
             } catch (JAXBException e) {
                 throw new RuntimeException(e);
             }

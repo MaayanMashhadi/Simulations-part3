@@ -49,11 +49,12 @@ public class RequestProcessServlet extends HttpServlet {
             Facade facade = (Facade) getServletContext().getAttribute("facade");
             WorldDefinition worldDefinition = facade.getWorldDefinition();
             worldDefinition.addTerminateCondition(terminateCondition);
+            Integer requestsCounter = (Integer) getServletContext().getAttribute("requestsCounter");
 
             RequestDetailsDTO requestDetailsDTO;
             List<TerminateConditionDTO> terminateConditions = new ArrayList<>();
             if (terminateCondition != null) {
-                facade.addTerminateCondition(terminateCondition, simulationName);
+                facade.addTerminateCondition(terminateCondition, simulationName,requestsCounter);
                 requestDetailsDTO = new
                         RequestDetailsDTO(username,(Integer)getServletContext().getAttribute("requestsCounter"),
                         simulationName, Integer.parseInt(amountOfRunning),"pending",0,0, terminateConditions);

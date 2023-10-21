@@ -6,8 +6,6 @@ import dto.*;
 import facade.Facade;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -17,7 +15,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import okhttp3.*;
 
-import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,13 +45,13 @@ public class ExecutionController {
     private boolean isFromResultScene;
     @FXML
     private Button clearButton;
-    private SimulationDTO simulationForHistory;
+    private Integer simulationForHistoryID;
 
     private MainController mainController;
     //private Simulation simulationForHistory;
 
-    public  void setSimulationForHistory(SimulationDTO simulationEnding) {
-        this.simulationForHistory =simulationEnding;
+    public  void setSimulationForHistoryID(Integer simulationEndingID) {
+        this.simulationForHistoryID =simulationEndingID;
     }
 
     public void setMainController(MainController mainController) {
@@ -262,7 +259,7 @@ public class ExecutionController {
     private void requestStartSimulationInHistory(){
         String RESOURCE = "/Server_Web_exploded/start-simulation-history";
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String simulationHistoryID = gson.toJson(simulationForHistory.getId());
+        String simulationHistoryID = gson.toJson(simulationForHistoryID);
         RequestBody formBody = new FormBody.Builder()
                 .add("simulationID", simulationHistoryID)
                 .build();
@@ -444,7 +441,7 @@ public class ExecutionController {
     private SimulationHistoryDTO requestForSimluationHistory() {
         String RESOURCE = "/Server_Web_exploded/create-history";
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String simulationHistoryID = gson.toJson(simulationForHistory.getId());
+        String simulationHistoryID = gson.toJson(simulationForHistoryID);
         HttpUrl.Builder urlBuilder = HttpUrl.parse(BASE_URL + RESOURCE)
                 .newBuilder()
                 .addQueryParameter("simulationID", simulationHistoryID);

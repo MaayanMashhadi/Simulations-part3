@@ -11,6 +11,7 @@ import java.util.*;
 
 public class WorldDefinition {
     private List<EntityDefinition> population;
+    private Integer requestNumber;
     private int ticks;
     private int numberOfThreads;
     private int rows;
@@ -25,6 +26,14 @@ public class WorldDefinition {
     private List<Rule> rules;
     private String name;
     private int sleep;
+
+    public void setRequestNumber(int requestNumber) {
+        this.requestNumber = requestNumber;
+    }
+
+    public Integer getRequestNumber() {
+        return requestNumber;
+    }
 
     public void initialize(){
         ticks = 0;

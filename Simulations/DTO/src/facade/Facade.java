@@ -94,15 +94,18 @@ public class Facade {
         WorldDefinitionDTO worldDefinitionDTO = dtoCreator.createWorldDefinitionDTO(worldDefinition);
         return worldDefinitionDTO;
     }
-    public void addTerminateCondition(TerminateCondition terminateCondition, String simulationName){
+    public void addTerminateCondition(TerminateCondition terminateCondition, String simulationName,
+                                      Integer requestNamber){
         if(worldDefinition.getTerminateConditions().size() > 0){
             createExistingWorld(simulationName);
         }
         worldDefinition.addTerminateCondition(terminateCondition);
         for(WorldDefinition worldDefinition1 : worldDefinitions){
-            if(worldDefinition1.getName().equals(worldDefinition.getName())){
+            if(worldDefinition1.getName().equals(worldDefinition.getName()) &&
+            worldDefinition1.getRequestNumber() == null){
                 for(TerminateCondition terminateCondition1 : worldDefinition.getTerminateConditions()){
                     worldDefinition1.addTerminateCondition(terminateCondition1);
+                    worldDefinition1.setRequestNumber(requestNamber);
                 }
                 break;
             }
@@ -155,7 +158,7 @@ public class Facade {
             population.add(newEntityDefinition);
         }
         //TODO : will get from the server
-        simulationHistory = new SimulationHistoryDTO(activeEnvironmentDTO,propertyInstances, population);
+        simulationHistory = new SimulationHistoryDTO(activeEnvironmentDTO,propertyInstances, population, worldDefinition.getName());
     }
 
     public ActiveEnvironment createEnvVarible(ActiveEnvironmentDTO activeEnvironmentDTO){
@@ -178,8 +181,18 @@ public class Facade {
     }
 
     public SimulationDTO startSimulationInHistory(ActiveEnvironmentDTO activeEnvironmentDTO,
-                                                  List<EntityDefinitionDTO> population, String userName) throws JAXBException {
-        //worldDefinition = generator.fromXmlFileToObject(file);
+                                                  List<EntityDefinitionDTO> population, String userName, String simulationName) throws JAXBException {
+        List<TerminateCondition> terminateConditions = new ArrayList<>();
+        for(WorldDefinition worldDefinition1 : worldDefinitions) {
+            if (worldDefinition1.getName().equals(simulationName)) {
+               terminateConditions = worldDefinition1.getTerminateConditions();
+                break;
+            }
+        }
+        worldDefinition = GenerateXML.buildFromExistingWorld(simulationName);
+        for(TerminateCondition terminateCondition : terminateConditions){
+            worldDefinition.addTerminateCondition(terminateCondition);
+        }
         ActiveEnvironment activeEnvironment = createEnvVarible(activeEnvironmentDTO);
         for(EntityDefinitionDTO entityDefinition : population){
             for(EntityDefinition entityDefinition1 : worldDefinition.getPopulation()){

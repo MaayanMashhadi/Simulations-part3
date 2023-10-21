@@ -142,9 +142,10 @@ public class MainController {
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/screens/ExecutionScene.fxml"));
                 Parent newSceneRoot = fxmlLoader.load();
                 ExecutionController newExecutionController = fxmlLoader.getController();
-                newExecutionController.setSimulationForHistory(simulationEnding);
+                newExecutionController.setSimulationForHistoryID(simulationEnding.getId());
                 newExecutionController.setIsFromResultScene(true);
-                newExecutionController.setWorldDefinitionDTO(worldDefinitionDTO);
+
+                newExecutionController.setWorldDefinitionDTO(simulationEnding.getWorldDefinitionDTO());
                 newExecutionController.setHboxScene(hboxScene);
                 newExecutionController.setMainController(this);
 

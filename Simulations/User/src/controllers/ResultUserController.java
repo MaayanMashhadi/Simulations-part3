@@ -522,7 +522,7 @@ public class ResultUserController {
             SimulationCurrentDetailsDTO simulationCurrentDetailsDTO = requestForCurrentDetailsSimulation(simulationForDetails.getId());
             if(simulationCurrentDetailsDTO != null){
                 numberOfTick.setText(
-                        Integer.toString(requestForCurrentDetailsSimulation(simulationForDetails.getId()).getCurrentTick()));
+                        Integer.toString(simulationCurrentDetailsDTO.getCurrentTick()));
             }
 
 
@@ -557,7 +557,7 @@ public class ResultUserController {
             SimulationCurrentDetailsDTO simulationCurrentDetailsDTO = requestForCurrentDetailsSimulation(simulationForDetails.getId());
             if(simulationCurrentDetailsDTO != null) {
                 numberOfSeconds.setText(
-                        Integer.toString(requestForCurrentDetailsSimulation(simulationForDetails.getId()).getCurrentSecond()));
+                        Integer.toString(simulationCurrentDetailsDTO.getCurrentSecond()));
             }
 
 
